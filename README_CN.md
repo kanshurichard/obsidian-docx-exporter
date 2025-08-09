@@ -30,3 +30,13 @@ DOCX Exporter 是一个为 Obsidian 设计的插件，旨在帮助用户将笔�
 1.  打开您想要导出的笔记。
 2.  点击左侧边栏的导出图标，或通过命令面板（`Ctrl/Cmd + P`）运行“**导出当前笔记为 DOCX**”命令。
 3.  插件会生成一个 DOCX 文件，并保存在与当前笔记相同的文件夹内。
+
+## 鸣谢 (Acknowledgements)
+此插件在开发过程中使用了以下开源项目和库：
+
+* **[JSZip](https://github.com/Stuk/jszip)**
+    * **许可证:** MIT
+    * **说明:** 用于处理 DOCX 文件（本质上是压缩文件）的打包和解压。
+* **[docx](https://github.com/dolanmiu/docx)**
+    * **许可证:** MIT
+    * **说明:** 一个强大的库，用于在纯 JavaScript/TypeScript 中生成 DOCX 文件。
