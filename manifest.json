@@ -2,6 +2,7 @@
 	"id": "docx-exporter",
 	"name": "DOCX Exporter",
 	"version": "1.0.0",
+	"minAppVersion": "1.0.0",
 	"description": "Export to Microsoft docx files, mobile devices supported",
 	"author": "Kanshurichard",
 	"authorUrl": "https://kanzhang.net/",
