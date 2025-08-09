@@ -30,3 +30,13 @@ You can install the DOCX Exporter directly from the Obsidian Community Plugins m
 1.  Open the note you want to export.
 2.  Click the export icon in the left sidebar, or run the command “**Export current note to DOCX**” via the command palette (`Ctrl/Cmd + P`).
 3.  The plugin will generate a DOCX file and save it in the same folder as the current note.
+
+## Acknowledgements
+This plugin uses the following open-source projects and libraries in its development:
+
+* **[JSZip](https://github.com/Stuk/jszip)**
+    * **License:** MIT
+    * **Description:** Used for packing and unpacking DOCX files, which are essentially zipped archives.
+* **[docx](https://github.com/dolanmiu/docx)**
+    * **License:** MIT
+    * **Description:** A powerful library for generating DOCX files in pure JavaScript/TypeScript.
