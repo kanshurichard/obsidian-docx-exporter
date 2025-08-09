@@ -1,6 +1,6 @@
 # DOCX Exporter: Obsidian Note Export Plugin
 
-[中文版](README-CN.md)
+[中文版](README_CN.md)
 
 ## Introduction
 DOCX Exporter is a plugin designed for Obsidian, aiming to help users easily export note content into DOCX format.
