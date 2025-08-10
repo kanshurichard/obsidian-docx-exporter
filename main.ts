@@ -54,7 +54,9 @@ const locales = {
     "SAVE_FILE_DIALOG_TITLE": "Save DOCX file",
     "SAVE_FILE_INPUT_LABEL": "File path (relative to vault root):",
     "BUTTON_SAVE": "Save",
-    "INVALID_FILE_PATH": "Invalid file path. Please enter a valid path."
+    "INVALID_FILE_PATH": "Invalid file path. Please enter a valid path.",
+    "EXPORTING_START": "Starting DOCX export...",
+    "DOWNLOADING_IMAGE": "Downloading image {0} of {1}..."
   },
   zh: {
     "PLUGIN_NAME": "DOCX 导出器",
@@ -81,7 +83,9 @@ const locales = {
     "SAVE_FILE_INPUT_LABEL": "文件路径（相对于库根目录）：",
     "BUTTON_SAVE": "保存",
     "INVALID_FILE_PATH": "无效的文件路径。请输入一个有效的路径。",
-    "FILE_SAVE_LOCATION_NOTICE": "已将 DOCX 文件导出到和笔记文件相同的文件夹内。"
+    "FILE_SAVE_LOCATION_NOTICE": "已将 DOCX 文件导出到和笔记文件相同的文件夹内。",
+    "EXPORTING_START": "开始导出 DOCX...",
+    "DOWNLOADING_IMAGE": "正在下载第 {0} 张图片，共 {1} 张..."
   },
   'zh-tw': {
     "PLUGIN_NAME": "DOCX 匯出器",
@@ -108,7 +112,9 @@ const locales = {
     "SAVE_FILE_INPUT_LABEL": "文件路徑（相對於庫根目錄）：",
     "BUTTON_SAVE": "儲存",
     "INVALID_FILE_PATH": "無效的文件路徑。請輸入一個有效的路徑。",
-    "FILE_SAVE_LOCATION_NOTICE": "已將 DOCX 文件匯出到和筆記文件相同的資料夾內。"
+    "FILE_SAVE_LOCATION_NOTICE": "已將 DOCX 文件匯出到和筆記文件相同的資料夾內。",
+    "EXPORTING_START": "開始匯出 DOCX...",
+    "DOWNLOADING_IMAGE": "正在下載第 {0} 張圖片，共 {1} 張..."
   },
   ja: {
     "PLUGIN_NAME": "DOCXエクスポート",
@@ -135,7 +141,9 @@ const locales = {
     "SAVE_FILE_INPUT_LABEL": "ファイルパス（ボールトのルートから）:",
     "BUTTON_SAVE": "保存",
     "INVALID_FILE_PATH": "無効なファイルパスです。有効なパスを入力してください。",
-    "FILE_SAVE_LOCATION_NOTICE": "DOCXファイルはノートと同じフォルダにエクスポートされました。"
+    "FILE_SAVE_LOCATION_NOTICE": "DOCXファイルはノートと同じフォルダにエクスポートされました。",
+    "EXPORTING_START": "DOCXのエクスポートを開始しています...",
+    "DOWNLOADING_IMAGE": "画像 {0}/{1} をダウンロード中..."
   },
   ko: {
     "PLUGIN_NAME": "DOCX 내보내기",
@@ -148,21 +156,23 @@ const locales = {
     "BUTTON_OVERWRITE": "덮어쓰기",
     "BUTTON_CANCEL": "취소",
     "EXPORT_SUCCESSFUL": "\"{0}\"에 성공적으로 내보냈습니다",
-    "EXPORT_FAILED": "DOCX 내보내기 실패. 자세한 내용은 개발자 콘솔을 확인하십시오.",
+    "EXPORT_FAILED": "DOCX 내보내기 실패. 자세한 내용은 개발자 콘솔을 확인하십시오。",
     "SAVE_FAILED": "파일 저장 실패: {0}",
     "DOWNLOAD_IMAGE_FAILED": "이미지 다운로드 실패: {0}",
     "IMAGE_LINK_MISSING": "이미지 링크 속성이 누락되었습니다. 내보내기를 건너뜁니다.",
-    "LOCAL_IMAGE_NOT_FOUND": "로컬 이미지를 찾을 수 없습니다: {0}. 내보내기를 건너뜁니다.",
-    "LOCAL_IMAGE_FILE_EMPTY": "로컬 이미지 파일이 비어 있습니다. 내보내기를 건너뜁니다.",
+    "LOCAL_IMAGE_NOT_FOUND": "로컬 이미지를 찾을 수 없습니다: {0}. 내보내기를 건너뜁니다。",
+    "LOCAL_IMAGE_FILE_EMPTY": "로컬 이미지 파일이 비어 있습니다. 내보내기를 건너뜁니다。",
     "UNSUPPORTED_IMAGE_FORMAT": "지원되지 않는 이미지 형식: {0}",
-    "IMAGE_DATA_INVALID": "이미지 데이터가 잘못되었습니다. 내보내기를 건너뜁니다.",
+    "IMAGE_DATA_INVALID": "이미지 데이터가 잘못되었습니다. 내보내기를 건너뜁니다。",
     "IMAGE_PROCESSING_ERROR": "이미지 처리 중 오류가 발생했습니다: {0}",
-    "FILE_READ_FAILED": "로컬 이미지 파일을 읽는 데 실패했습니다: {0}. 파일 권한을 확인하십시오.",
+    "FILE_READ_FAILED": "로컬 이미지 파일을 읽는 데 실패했습니다: {0}. 파일 권한을 확인하십시오。",
     "SAVE_FILE_DIALOG_TITLE": "DOCX 파일 저장",
     "SAVE_FILE_INPUT_LABEL": "파일 경로 (볼트 루트 기준):",
     "BUTTON_SAVE": "저장",
-    "INVALID_FILE_PATH": "잘못된 파일 경로입니다. 유효한 경로를 입력하십시오.",
-    "FILE_SAVE_LOCATION_NOTICE": "DOCX 파일은 노트와 동일한 폴더에 내보내졌습니다."
+    "INVALID_FILE_PATH": "잘못된 파일 경로입니다. 유효한 경로를 입력하십시오。",
+    "FILE_SAVE_LOCATION_NOTICE": "DOCX 파일은 노트와 동일한 폴더에 내보내졌습니다。",
+    "EXPORTING_START": "DOCX 내보내기를 시작하는 중...",
+    "DOWNLOADING_IMAGE": "이미지 다운로드 중 ({0}/{1})..."
   },
   fr: {
     "PLUGIN_NAME": "Exportateur DOCX",
@@ -189,7 +199,9 @@ const locales = {
     "SAVE_FILE_INPUT_LABEL": "Chemin du fichier (par rapport à la racine du coffre-fort):",
     "BUTTON_SAVE": "Enregistrer",
     "INVALID_FILE_PATH": "Chemin de fichier invalide. Veuillez entrer un chemin valide.",
-    "FILE_SAVE_LOCATION_NOTICE": "Le fichier DOCX a été exporté dans le même dossier que le fichier de note."
+    "FILE_SAVE_LOCATION_NOTICE": "Le fichier DOCX a été exporté dans le même dossier que le fichier de note.",
+    "EXPORTING_START": "Démarrage de l'exportation DOCX...",
+    "DOWNLOADING_IMAGE": "Téléchargement de l'image {0} sur {1}..."
   },
   es: {
     "PLUGIN_NAME": "Exportador DOCX",
@@ -216,34 +228,9 @@ const locales = {
     "SAVE_FILE_INPUT_LABEL": "Ruta del archivo (relativa a la bóveda):",
     "BUTTON_SAVE": "Guardar",
     "INVALID_FILE_PATH": "Ruta de archivo inválida. Por favor, introduzca una ruta válida.",
-    "FILE_SAVE_LOCATION_NOTICE": "El archivo DOCX ha sido exportado a la misma carpeta que el archivo de notas."
-  },
-  pt: {
-    "PLUGIN_NAME": "Exportador DOCX",
-    "EXPORT_COMMAND_NAME": "Exportar nota atual para DOCX",
-    "LOADING_PLUGIN": "Carregando plugin de exportação DOCX",
-    "UNLOADING_PLUGIN": "Descarregando plugin de exportação DOCX",
-    "NO_ACTIVE_FILE": "Nenhum arquivo ativo para exportar.",
-    "FILE_ALREADY_EXISTS_TITLE": "O arquivo já existe",
-    "OVERWRITE_CONFIRMATION": "Deseja substituir o arquivo .docx existente?",
-    "BUTTON_OVERWRITE": "Substituir",
-    "BUTTON_CANCEL": "Cancelar",
-    "EXPORT_SUCCESSFUL": "Exportado com sucesso para \"{0}\"",
-    "EXPORT_FAILED": "Falha ao exportar DOCX. Verifique o console do desenvolvedor para obter detalhes.",
-    "SAVE_FAILED": "Falha ao salvar o arquivo: {0}",
-    "DOWNLOAD_IMAGE_FAILED": "Falha ao baixar a imagem: {0}",
-    "IMAGE_LINK_MISSING": "O atributo de link da imagem está ausente, ignorando a exportação.",
-    "LOCAL_IMAGE_NOT_FOUND": "Imagem local não encontrada: {0}, ignorando a exportação.",
-    "LOCAL_IMAGE_FILE_EMPTY": "O arquivo de imagem local está vazio, ignorando a exportação.",
-    "UNSUPPORTED_IMAGE_FORMAT": "Formato de imagem não suportado para: {0}",
-    "IMAGE_DATA_INVALID": "Dados de imagem inválidos, ignorando a exportação.",
-    "IMAGE_PROCESSING_ERROR": "Erro ao processar a imagem: {0}",
-    "FILE_READ_FAILED": "Falha ao ler o arquivo de imagem local: {0}, verifique as permissões do arquivo.",
-    "SAVE_FILE_DIALOG_TITLE": "Salvar arquivo DOCX",
-    "SAVE_FILE_INPUT_LABEL": "Caminho do arquivo (relativo à raiz do cofre):",
-    "BUTTON_SAVE": "Salvar",
-    "INVALID_FILE_PATH": "Caminho do arquivo inválido. Por favor, insira um caminho válido.",
-    "FILE_SAVE_LOCATION_NOTICE": "O arquivo DOCX foi exportado para a mesma pasta que o arquivo de nota."
+    "FILE_SAVE_LOCATION_NOTICE": "El archivo DOCX ha sido exportado a la misma carpeta que el archivo de notas.",
+    "EXPORTING_START": "Iniciando exportación a DOCX...",
+    "DOWNLOADING_IMAGE": "Descargando imagen {0} de {1}..."
   },
   ru: {
     "PLUGIN_NAME": "Экспортер DOCX",
@@ -270,7 +257,154 @@ const locales = {
     "SAVE_FILE_INPUT_LABEL": "Путь к файлу (относительно корневой папки хранилища):",
     "BUTTON_SAVE": "Сохранить",
     "INVALID_FILE_PATH": "Неверный путь к файлу. Пожалуйста, введите корректный путь.",
-    "FILE_SAVE_LOCATION_NOTICE": "Файл DOCX был экспортирован в ту же папку, что и файл заметки."
+    "FILE_SAVE_LOCATION_NOTICE": "Файл DOCX был экспортирован в ту же папку, что и файл заметки.",
+    "EXPORTING_START": "Начало экспорта в DOCX...",
+    "DOWNLOADING_IMAGE": "Загрузка изображения {0} из {1}..."
+  },
+  it: {
+    "PLUGIN_NAME": "Esportatore DOCX",
+    "EXPORT_COMMAND_NAME": "Esporta nota corrente in DOCX",
+    "LOADING_PLUGIN": "Caricamento plugin di esportazione DOCX",
+    "UNLOADING_PLUGIN": "Scaricamento plugin di esportazione DOCX",
+    "NO_ACTIVE_FILE": "Nessun file attivo da esportare.",
+    "FILE_ALREADY_EXISTS_TITLE": "Il file esiste già",
+    "OVERWRITE_CONFIRMATION": "Vuoi sovrascrivere il file .docx esistente?",
+    "BUTTON_OVERWRITE": "Sovrascrivi",
+    "BUTTON_CANCEL": "Annulla",
+    "EXPORT_SUCCESSFUL": "Esportato con successo in \"{0}\"",
+    "EXPORT_FAILED": "Esportazione DOCX fallita. Controlla la console di sviluppo per i dettagli.",
+    "SAVE_FAILED": "Salvataggio file fallito: {0}",
+    "DOWNLOAD_IMAGE_FAILED": "Download immagine fallito: {0}",
+    "IMAGE_LINK_MISSING": "Attributo link immagine mancante, l'esportazione viene saltata.",
+    "LOCAL_IMAGE_NOT_FOUND": "Immagine locale non trovata: {0}, l'esportazione viene saltata.",
+    "LOCAL_IMAGE_FILE_EMPTY": "File immagine locale vuoto, l'esportazione viene saltata.",
+    "UNSUPPORTED_IMAGE_FORMAT": "Formato immagine non supportato per: {0}",
+    "IMAGE_DATA_INVALID": "Dati immagine non validi, l'esportazione viene saltata.",
+    "IMAGE_PROCESSING_ERROR": "Errore durante l'elaborazione dell'immagine: {0}",
+    "FILE_READ_FAILED": "Lettura file immagine locale fallita: {0}, controlla i permessi del file.",
+    "SAVE_FILE_DIALOG_TITLE": "Salva file DOCX",
+    "SAVE_FILE_INPUT_LABEL": "Percorso file (relativo alla root del vault):",
+    "BUTTON_SAVE": "Salva",
+    "INVALID_FILE_PATH": "Percorso file non valido. Inserisci un percorso valido.",
+    "FILE_SAVE_LOCATION_NOTICE": "Il file DOCX è stato esportato nella stessa cartella del file di nota.",
+    "EXPORTING_START": "Avvio esportazione DOCX...",
+    "DOWNLOADING_IMAGE": "Download immagine {0} di {1}..."
+  },
+  pt: {
+    "PLUGIN_NAME": "Exportador DOCX",
+    "EXPORT_COMMAND_NAME": "Exportar nota atual para DOCX",
+    "LOADING_PLUGIN": "Carregando plugin de exportação DOCX",
+    "UNLOADING_PLUGIN": "Descarregando plugin de exportação DOCX",
+    "NO_ACTIVE_FILE": "Nenhum arquivo ativo para exportar.",
+    "FILE_ALREADY_EXISTS_TITLE": "O arquivo já existe",
+    "OVERWRITE_CONFIRMATION": "Deseja sobrescrever o arquivo .docx existente?",
+    "BUTTON_OVERWRITE": "Sobrescrever",
+    "BUTTON_CANCEL": "Cancelar",
+    "EXPORT_SUCCESSFUL": "Exportado com sucesso para \"{0}\"",
+    "EXPORT_FAILED": "Falha ao exportar DOCX. Verifique o console do desenvolvedor para detalhes.",
+    "SAVE_FAILED": "Falha ao salvar arquivo: {0}",
+    "DOWNLOAD_IMAGE_FAILED": "Falha ao baixar imagem: {0}",
+    "IMAGE_LINK_MISSING": "Atributo de link de imagem ausente, pulando exportação.",
+    "LOCAL_IMAGE_NOT_FOUND": "Imagem local não encontrada: {0}, pulando exportação.",
+    "LOCAL_IMAGE_FILE_EMPTY": "Arquivo de imagem local vazio, pulando exportação.",
+    "UNSUPPORTED_IMAGE_FORMAT": "Formato de imagem não suportado para: {0}",
+    "IMAGE_DATA_INVALID": "Dados de imagem inválidos, pulando exportação.",
+    "IMAGE_PROCESSING_ERROR": "Erro ao processar imagem: {0}",
+    "FILE_READ_FAILED": "Falha ao ler arquivo de imagem local: {0}, verifique as permissões do arquivo.",
+    "SAVE_FILE_DIALOG_TITLE": "Salvar arquivo DOCX",
+    "SAVE_FILE_INPUT_LABEL": "Caminho do arquivo (relativo à raiz do vault):",
+    "BUTTON_SAVE": "Salvar",
+    "INVALID_FILE_PATH": "Caminho de arquivo inválido. Por favor, insira um caminho válido.",
+    "FILE_SAVE_LOCATION_NOTICE": "O arquivo DOCX foi exportado para a mesma pasta do arquivo de nota.",
+    "EXPORTING_START": "Iniciando exportação DOCX...",
+    "DOWNLOADING_IMAGE": "Baixando imagem {0} de {1}..."
+  },
+  tr: {
+    "PLUGIN_NAME": "DOCX Dışa Aktarıcı",
+    "EXPORT_COMMAND_NAME": "Mevcut notu DOCX olarak dışa aktar",
+    "LOADING_PLUGIN": "DOCX dışa aktarma eklentisi yükleniyor",
+    "UNLOADING_PLUGIN": "DOCX dışa aktarma eklentisi kaldırılıyor",
+    "NO_ACTIVE_FILE": "Dışa aktarılacak aktif dosya yok.",
+    "FILE_ALREADY_EXISTS_TITLE": "Dosya zaten mevcut",
+    "OVERWRITE_CONFIRMATION": "Mevcut .docx dosyasının üzerine yazmak istiyor musunuz?",
+    "BUTTON_OVERWRITE": "Üzerine yaz",
+    "BUTTON_CANCEL": "İptal",
+    "EXPORT_SUCCESSFUL": "Başarıyla \"{0}\" konumuna dışa aktarıldı",
+    "EXPORT_FAILED": "DOCX dışa aktarma başarısız. Ayrıntılar için geliştirici konsolunu kontrol edin.",
+    "SAVE_FAILED": "Dosya kaydetme başarısız: {0}",
+    "DOWNLOAD_IMAGE_FAILED": "Resim indirme başarısız: {0}",
+    "IMAGE_LINK_MISSING": "Resim bağlantı özniteliği eksik, dışa aktarma atlanıyor.",
+    "LOCAL_IMAGE_NOT_FOUND": "Yerel resim bulunamadı: {0}, dışa aktarma atlanıyor.",
+    "LOCAL_IMAGE_FILE_EMPTY": "Yerel resim dosyası boş, dışa aktarma atlanıyor.",
+    "UNSUPPORTED_IMAGE_FORMAT": "Desteklenmeyen resim formatı: {0}",
+    "IMAGE_DATA_INVALID": "Geçersiz resim verisi, dışa aktarma atlanıyor.",
+    "IMAGE_PROCESSING_ERROR": "Resim işleme hatası: {0}",
+    "FILE_READ_FAILED": "Yerel resim dosyası okuma başarısız: {0}, dosya izinlerini kontrol edin.",
+    "SAVE_FILE_DIALOG_TITLE": "DOCX dosyasını kaydet",
+    "SAVE_FILE_INPUT_LABEL": "Dosya yolu (kasa kök dizinine göre):",
+    "BUTTON_SAVE": "Kaydet",
+    "INVALID_FILE_PATH": "Geçersiz dosya yolu. Lütfen geçerli bir yol girin.",
+    "FILE_SAVE_LOCATION_NOTICE": "DOCX dosyası, not dosyasıyla aynı klasöre aktarıldı.",
+    "EXPORTING_START": "DOCX dışa aktarma başlatılıyor...",
+    "DOWNLOADING_IMAGE": "Resim indiriliyor {0}/{1}..."
+  },
+  de: {
+    "PLUGIN_NAME": "DOCX Exportierer",
+    "EXPORT_COMMAND_NAME": "Aktuelle Notiz als DOCX exportieren",
+    "LOADING_PLUGIN": "DOCX Export-Plugin wird geladen",
+    "UNLOADING_PLUGIN": "DOCX Export-Plugin wird entladen",
+    "NO_ACTIVE_FILE": "Keine aktive Datei zum Exportieren.",
+    "FILE_ALREADY_EXISTS_TITLE": "Datei existiert bereits",
+    "OVERWRITE_CONFIRMATION": "Möchten Sie die bestehende .docx-Datei überschreiben?",
+    "BUTTON_OVERWRITE": "Überschreiben",
+    "BUTTON_CANCEL": "Abbrechen",
+    "EXPORT_SUCCESSFUL": "Erfolgreich exportiert nach \"{0}\"",
+    "EXPORT_FAILED": "DOCX-Export fehlgeschlagen. Prüfen Sie die Entwicklerkonsole für Details.",
+    "SAVE_FAILED": "Fehler beim Speichern der Datei: {0}",
+    "DOWNLOAD_IMAGE_FAILED": "Fehler beim Herunterladen des Bildes: {0}",
+    "IMAGE_LINK_MISSING": "Bild-Link-Attribut fehlt, Export wird übersprungen.",
+    "LOCAL_IMAGE_NOT_FOUND": "Lokales Bild nicht gefunden: {0}, Export wird übersprungen.",
+    "LOCAL_IMAGE_FILE_EMPTY": "Lokale Bilddatei ist leer, Export wird übersprungen.",
+    "UNSUPPORTED_IMAGE_FORMAT": "Nicht unterstütztes Bildformat für: {0}",
+    "IMAGE_DATA_INVALID": "Ungültige Bilddaten, Export wird übersprungen.",
+    "IMAGE_PROCESSING_ERROR": "Fehler bei der Bildverarbeitung: {0}",
+    "FILE_READ_FAILED": "Fehler beim Lesen der lokalen Bilddatei: {0}, überprüfen Sie die Dateiberechtigungen.",
+    "SAVE_FILE_DIALOG_TITLE": "DOCX-Datei speichern",
+    "SAVE_FILE_INPUT_LABEL": "Dateipfad (relativ zum Vault-Root):",
+    "BUTTON_SAVE": "Speichern",
+    "INVALID_FILE_PATH": "Ungültiger Dateipfad. Bitte geben Sie einen gültigen Pfad ein.",
+    "FILE_SAVE_LOCATION_NOTICE": "Die DOCX-Datei wurde im gleichen Ordner wie die Notizdatei exportiert.",
+    "EXPORTING_START": "DOCX-Export wird gestartet...",
+    "DOWNLOADING_IMAGE": "Lade Bild {0} von {1}..."
+  },
+  ar: {
+    "PLUGIN_NAME": "مصدّر DOCX",
+    "EXPORT_COMMAND_NAME": "تصدير الملاحظة الحالية إلى DOCX",
+    "LOADING_PLUGIN": "جاري تحميل إضافة تصدير DOCX",
+    "UNLOADING_PLUGIN": "جاري إلغاء تحميل إضافة تصدير DOCX",
+    "NO_ACTIVE_FILE": "لا يوجد ملف نشط للتصدير.",
+    "FILE_ALREADY_EXISTS_TITLE": "الملف موجود بالفعل",
+    "OVERWRITE_CONFIRMATION": "هل تريد استبدال ملف .docx الموجود؟",
+    "BUTTON_OVERWRITE": "استبدال",
+    "BUTTON_CANCEL": "إلغاء",
+    "EXPORT_SUCCESSFUL": "تم التصدير بنجاح إلى \"{0}\"",
+    "EXPORT_FAILED": "فشل تصدير DOCX. راجع وحدة التحكم للمطورين للحصول على التفاصيل.",
+    "SAVE_FAILED": "فشل حفظ الملف: {0}",
+    "DOWNLOAD_IMAGE_FAILED": "فشل تحميل الصورة: {0}",
+    "IMAGE_LINK_MISSING": "سمة رابط الصورة مفقودة، يتم تخطي التصدير.",
+    "LOCAL_IMAGE_NOT_FOUND": "الصورة المحلية غير موجودة: {0}، يتم تخطي التصدير.",
+    "LOCAL_IMAGE_FILE_EMPTY": "ملف الصورة المحلي فارغ، يتم تخطي التصدير.",
+    "UNSUPPORTED_IMAGE_FORMAT": "تنسيق صورة غير مدعوم لـ: {0}",
+    "IMAGE_DATA_INVALID": "بيانات الصورة غير صالحة، يتم تخطي التصدير.",
+    "IMAGE_PROCESSING_ERROR": "خطأ في معالجة الصورة: {0}",
+    "FILE_READ_FAILED": "فشل قراءة ملف الصورة المحلي: {0}، تحقق من أذونات الملف.",
+    "SAVE_FILE_DIALOG_TITLE": "حفظ ملف DOCX",
+    "SAVE_FILE_INPUT_LABEL": "مسار الملف (نسبة إلى جذر الخزينة):",
+    "BUTTON_SAVE": "حفظ",
+    "INVALID_FILE_PATH": "مسار ملف غير صالح. الرجاء إدخال مسار صالح.",
+    "FILE_SAVE_LOCATION_NOTICE": "تم تصدير ملف DOCX إلى نفس مجلد ملف الملاحظة.",
+    "EXPORTING_START": "جاري بدء تصدير DOCX...",
+    "DOWNLOADING_IMAGE": "جاري تحميل الصورة {0} من {1}..."
   }
 };
 
@@ -329,11 +463,15 @@ class OverwriteConfirmModal extends Modal {
 // --- 插件主类 ---
 export default class DocxExporterPlugin extends Plugin {
   i18n: I18N;
+  private numberingCounter = 1; // 有序列表编号计数器
+  private numberingReferences = new Set<string>(); // 记录所有编号 reference
+
+  private totalNetworkImages = 0;
+  private currentImageIndex = 0;
 
   async onload() {
     this.i18n = new I18N(this.app);
     console.log(this.i18n.t("LOADING_PLUGIN"));
-    
     this.addRibbonIcon('file-output', this.i18n.t("EXPORT_COMMAND_NAME"), () => this.exportCurrentNoteToDocx());
     this.addCommand({
       id: 'export-to-docx',
@@ -341,78 +479,64 @@ export default class DocxExporterPlugin extends Plugin {
       callback: () => this.exportCurrentNoteToDocx()
     });
   }
-  
   onunload() {
     console.log(this.i18n.t("UNLOADING_PLUGIN"));
   }
 
-  // --- 辅助函数 ---
+  // px转为docx字体单位
   private pxToHalfPoints(px: string): number | undefined {
     const pxValue = parseFloat(px);
-    if (isNaN(pxValue)) return undefined;
-    return Math.round(pxValue * 0.75 * 2);
+    return isNaN(pxValue) ? undefined : Math.round(pxValue * 1.5);
   }
 
+  // rgb颜色转16进制
   private rgbToHex(rgb: string): string | undefined {
-    if (!rgb || !rgb.startsWith('rgb') || rgb === 'rgba(0, 0, 0, 0)') return undefined;
-    const parts = rgb.match(/^rgb(?:a)?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d\.]+)?\)$/);
-    if (!parts) return undefined;
-    const toHex = (c: string) => ('0' + parseInt(c).toString(16)).slice(-2);
-    return `${toHex(parts[1])}${toHex(parts[2])}${toHex(parts[3])}`;
+    if (!rgb?.startsWith('rgb') || rgb === 'rgba(0, 0, 0, 0)') return undefined;
+    const parts = rgb.match(/^rgb(?:a)?\((\d+),\s*(\d+),\s*(\d+)/);
+    return parts ? [1,2,3].map(i=>('0'+parseInt(parts[i]).toString(16)).slice(-2)).join('') : undefined;
   }
 
+  // base64转ArrayBuffer
   private base64ToArrayBuffer(base64: string): ArrayBuffer {
-    const binary_string = window.atob(base64);
-    const len = binary_string.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binary_string.charCodeAt(i);
-    }
+    const bin = window.atob(base64), len = bin.length, bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
     return bytes.buffer;
   }
 
+  // 解析图片尺寸
   private getImageDimensionsFromBuffer(buffer: ArrayBuffer): { width: number, height: number } | null {
     const view = new DataView(buffer);
     try {
-      if (view.getUint16(0) === 0xFFD8) { // JPEG marker
+      if (view.getUint16(0) === 0xFFD8) { // JPEG
         let offset = 2;
         while (offset < buffer.byteLength) {
-          if (view.getUint8(offset) !== 0xFF) {
-            offset++;
-            continue;
-          }
+          if (view.getUint8(offset) !== 0xFF) { offset++; continue; }
           const marker = view.getUint8(offset + 1);
-          if (marker === 0xC0 || marker === 0xC2) { // SOF0, SOF2
-            const height = view.getUint16(offset + 5);
-            const width = view.getUint16(offset + 7);
-            return { width, height };
-          }
+          if (marker === 0xC0 || marker === 0xC2)
+            return { width: view.getUint16(offset + 7), height: view.getUint16(offset + 5) };
           offset += 2 + view.getUint16(offset + 2);
         }
-      } else if (view.getUint32(0) === 0x89504E47) { // PNG marker
-        const width = view.getUint32(16);
-        const height = view.getUint32(20);
-        return { width, height };
+      } else if (view.getUint32(0) === 0x89504E47) { // PNG
+        return { width: view.getUint32(16), height: view.getUint32(20) };
       }
-    } catch (e) {
-      console.error("Failed to parse image dimensions from buffer:", e);
-    }
+    } catch {}
     return null;
   }
 
+  // 检测图片mime
   private detectMimeFromHeader(u8: Uint8Array): string | null {
     if (!u8 || u8.length < 8) return null;
-    if (u8[0] === 0x89 && u8[1] === 0x50 && u8[2] === 0x4E && u8[3] === 0x47) return 'image/png';
-    if (u8[0] === 0xFF && u8[1] === 0xD8 && u8[2] === 0xFF) return 'image/jpeg';
-    if (u8[0] === 0x47 && u8[1] === 0x49 && u8[2] === 0x46) return 'image/gif';
+    if (u8[0] === 0x89 && u8[1] === 0x50) return 'image/png';
+    if (u8[0] === 0xFF && u8[1] === 0xD8) return 'image/jpeg';
+    if (u8[0] === 0x47 && u8[1] === 0x49) return 'image/gif';
     if (u8[0] === 0x42 && u8[1] === 0x4D) return 'image/bmp';
     if (u8[0] === 0x52 && u8[1] === 0x49 && u8[2] === 0x46 && u8[3] === 0x46 &&
-      u8[8] === 0x57 && u8[9] === 0x45 && u8[10] === 0x42 && u8[11] === 0x50) return 'image/webp';
-    const textStart = new TextDecoder().decode(u8.slice(0, 64)).trim();
-    if (textStart.indexOf('<svg') !== -1) return 'image/svg+xml';
+      u8[8] === 0x57 && u8[9] === 0x45) return 'image/webp';
+    if (new TextDecoder().decode(u8.slice(0, 64)).includes('<svg')) return 'image/svg+xml';
     return null;
   }
 
+  // mime转扩展名
   private extFromMime(mime: string | null): string | null {
     if (!mime) return null;
     if (mime === 'image/png') return 'png';
@@ -424,137 +548,191 @@ export default class DocxExporterPlugin extends Plugin {
     return null;
   }
 
+  // 转义正则
   private escapeRegExp(s: string): string {
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
-  // --- 解析器 ---
+  // 解析代码高亮
   private parseSyntaxHighlightedCode(codeElement: HTMLElement, defaultFont: any, defaultSize: number): TextRun[] {
     const runs: TextRun[] = [];
-    const nodes = Array.from(codeElement.childNodes);
-    let hasContent = false;
     const codeFont = { name: 'Courier New' };
-    nodes.forEach(node => {
+    Array.from(codeElement.childNodes).forEach(node => {
       if (node.nodeType === Node.TEXT_NODE && node.textContent) {
-        const style = window.getComputedStyle(codeElement);
-        const segments = node.textContent.split('\n');
-        segments.forEach((segment, segmentIndex) => {
-          if (segment) {
-            runs.push(new TextRun({ text: segment, font: codeFont, color: this.rgbToHex(style.color), size: defaultSize }));
-            hasContent = true;
-          }
-          if (segmentIndex < segments.length - 1) {
-            runs.push(new TextRun({ break: 1 }));
-            hasContent = true;
-          }
+        node.textContent.split('\n').forEach((seg, idx, arr) => {
+          if (seg) runs.push(new TextRun({ text: seg, font: codeFont, color: this.rgbToHex(window.getComputedStyle(codeElement).color), size: defaultSize }));
+          if (idx < arr.length - 1) runs.push(new TextRun({ break: 1 }));
         });
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         const el = node as HTMLElement;
-        const style = window.getComputedStyle(el);
-        const color = this.rgbToHex(style.color);
-        const segments = el.textContent?.split('\n') || [''];
-        segments.forEach((segment, segmentIndex) => {
-          if (segment) {
-            runs.push(new TextRun({ text: segment, font: codeFont, color: color, size: defaultSize }));
-            hasContent = true;
-          }
-          if (segmentIndex < segments.length - 1) {
-            runs.push(new TextRun({ break: 1 }));
-            hasContent = true;
-          }
+        el.textContent?.split('\n').forEach((seg, idx, arr) => {
+          if (seg) runs.push(new TextRun({ text: seg, font: codeFont, color: this.rgbToHex(window.getComputedStyle(el).color), size: defaultSize }));
+          if (idx < arr.length - 1) runs.push(new TextRun({ break: 1 }));
         });
       }
     });
-    if (!hasContent && codeElement.textContent?.includes('\n')) {
-      runs.push(new TextRun({ text: '', break: 1 }));
-    }
     return runs;
   }
 
-  private async parseListElement(listEl: HTMLUListElement | HTMLOListElement, level: number, bodyBgColor: string, sourcePath: string): Promise<Paragraph[]> {
+  // 解析列表（支持多级缩进和有序/无序）
+  private async parseListElement(
+    listEl: HTMLUListElement | HTMLOListElement,
+    level: number,
+    bodyBgColor: string,
+    sourcePath: string,
+    numberingRef?: string
+  ): Promise<Paragraph[]> {
     const paragraphs: Paragraph[] = [];
-    const listItems = Array.from(listEl.children).filter(child => child.tagName === 'LI');
     const listType = listEl.tagName === 'OL' ? 'number' : 'bullet';
-    for (const li of listItems) {
+    let currentNumberingRef = numberingRef;
+    if (listType === 'number' && !numberingRef) {
+      currentNumberingRef = `default-numbering-${this.numberingCounter++}`;
+      this.numberingReferences.add(currentNumberingRef);
+    }
+    for (const li of Array.from(listEl.children).filter(c => c.tagName === 'LI')) {
       const liElement = li as HTMLLIElement;
       const contentContainer = document.createElement('div');
       let nestedList: HTMLUListElement | HTMLOListElement | null = null;
       for (const child of Array.from(liElement.childNodes)) {
-        if (child.nodeType === Node.ELEMENT_NODE && (child.nodeName === 'UL' || child.nodeName === 'OL')) {
+        if (child.nodeType === Node.ELEMENT_NODE && (child.nodeName === 'UL' || child.nodeName === 'OL'))
           nestedList = child as HTMLUListElement | HTMLOListElement;
-        } else {
-          contentContainer.appendChild(child.cloneNode(true));
-        }
+        else contentContainer.appendChild(child.cloneNode(true));
       }
       if (contentContainer.textContent?.trim() || contentContainer.querySelector('img')) {
         const style = window.getComputedStyle(liElement);
         const paragraphOptions: any = {};
         const bgColor = this.rgbToHex(style.backgroundColor);
-        if (bgColor && bgColor !== bodyBgColor) {
+        if (bgColor && bgColor !== bodyBgColor)
           paragraphOptions.shading = { type: ShadingType.CLEAR, fill: bgColor, color: "auto" };
-        }
+        paragraphOptions.indent = { left: 720 * level };
         const children = await this.parseInlineElements(contentContainer, sourcePath);
         if (children.length > 0) {
-          const paragraphProperties: any = { ...paragraphOptions, children, spacing: { after: 100 } };
-          if (listType === 'bullet') {
-            paragraphProperties.bullet = { level };
-          } else {
-            paragraphProperties.numbering = { reference: "default-numbering", level };
-          }
-          paragraphs.push(new Paragraph(paragraphProperties));
+          const props: any = { ...paragraphOptions, children, spacing: { after: 100 } };
+          if (listType === 'bullet') props.bullet = { level };
+          else props.numbering = { reference: currentNumberingRef, level };
+          paragraphs.push(new Paragraph(props));
         }
       }
-      if (nestedList) {
-        paragraphs.push(...await this.parseListElement(nestedList, level + 1, bodyBgColor, sourcePath));
-      }
+      if (nestedList)
+        paragraphs.push(...await this.parseListElement(nestedList, level + 1, bodyBgColor, sourcePath, currentNumberingRef));
     }
     return paragraphs;
   }
 
-  private async parseTableElement(tableEl: HTMLTableElement, bodyBgColor: string, sourcePath: string): Promise<Table> {
-    const rows = Array.from(tableEl.querySelectorAll('tr'));
-    const docxRows: TableRow[] = [];
-    for (const row of rows) {
-      const cells = Array.from(row.querySelectorAll('th, td'));
-      const docxCells: TableCell[] = [];
-      for (const cell of cells) {
-        const cellContent = await this.htmlToDocxObjects(cell as HTMLElement, bodyBgColor, false, 0, sourcePath);
-        docxCells.push(new TableCell({ children: cellContent }));
+  // 解析表格
+  private async parseTableElement(tableEl: HTMLElement, bodyBgColor: string, sourcePath: string): Promise<Table> {
+    const rows: TableRow[] = [];
+    let isFirstRow = true;  // 标记是否为表头行
+    
+    // 遍历表格行
+    for (const row of Array.from(tableEl.querySelectorAll('tr'))) {
+      const cells: TableCell[] = [];
+      
+      // 遍历单元格
+      for (const cell of Array.from(row.querySelectorAll('th, td'))) {
+        const cellStyle = window.getComputedStyle(cell);
+        const isHeader = cell.tagName.toUpperCase() === 'TH' || isFirstRow;
+        
+        // 处理单元格内容
+        const inlineElements = await this.parseInlineElements(cell, sourcePath);
+        const paragraph = new Paragraph({
+          children: inlineElements,
+          alignment: this.getCellAlignment(cellStyle.textAlign),
+          spacing: { before: 100, after: 100 },
+          font: { name: 'Times New Roman' }
+        });
+
+        // 为表头单元格添加特殊样式
+        cells.push(new TableCell({
+          children: [paragraph],
+          margins: {
+            top: 100,
+            bottom: 100,
+            left: 100,
+            right: 100
+          },
+          ...(isHeader && {
+            shading: {
+              fill: "E7E6E6",  // 浅灰色背景
+              type: ShadingType.CLEAR,
+              color: "auto"
+            },
+            verticalAlign: "center"
+          }),
+          verticalAlign: "center"
+        }));
       }
-      docxRows.push(new TableRow({ children: docxCells }));
+      
+      rows.push(new TableRow({ 
+        children: cells,
+        tableHeader: isFirstRow // 标记表头行
+      }));
+      isFirstRow = false;
     }
-    return new Table({ rows: docxRows, width: { size: 100, type: WidthType.PERCENTAGE } });
+
+    // 创建表格，添加边框样式
+    return new Table({
+      rows,
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      margins: { top: 100, bottom: 100 },
+      borders: {
+        top: { style: BorderStyle.SINGLE, size: 1, color: "auto" },
+        bottom: { style: BorderStyle.SINGLE, size: 1, color: "auto" },
+        left: { style: BorderStyle.SINGLE, size: 1, color: "auto" },
+        right: { style: BorderStyle.SINGLE, size: 1, color: "auto" },
+        insideHorizontal: { style: BorderStyle.SINGLE, size: 1, color: "auto" },
+        insideVertical: { style: BorderStyle.SINGLE, size: 1, color: "auto" }
+      }
+    });
   }
 
+  // 辅助函数：获取单元格对齐方式
+  private getCellAlignment(textAlign: string): AlignmentType {
+    switch (textAlign) {
+      case 'center': return AlignmentType.CENTER;
+      case 'right': return AlignmentType.RIGHT;
+      case 'justify': return AlignmentType.JUSTIFIED;
+      default: return AlignmentType.LEFT;
+    }
+  }
+
+  // 解析行内元素（支持超链接、加粗、斜体、代码、图片等）
   private async parseInlineElements(element: HTMLElement, sourcePath: string): Promise<(TextRun | ExternalHyperlink | ImageRun)[]> {
     const runs: (TextRun | ExternalHyperlink | ImageRun)[] = [];
-    const children = Array.from(element.childNodes);
     const mainFont = { name: 'Times New Roman' };
     const codeFont = { name: 'Courier New' };
-
-    for (const child of children) {
+    for (const child of Array.from(element.childNodes)) {
       if (child.nodeType === Node.TEXT_NODE) {
-        if (!child.textContent) continue;
+        const textContent = child.textContent ?? '';
+        if (!textContent.trim()) continue;
         const style = window.getComputedStyle(element);
-        const textContent = child.textContent.trim();
-        if (textContent.length === 0) continue;
-        const runOptions: any = { text: textContent };
-        runOptions.color = this.rgbToHex(style.color);
-        runOptions.size = this.pxToHalfPoints(style.fontSize);
-        runOptions.font = mainFont;
-        if (parseInt(style.fontWeight) >= 600) runOptions.bold = true;
-        if (style.fontStyle === 'italic') runOptions.italics = true;
-        runs.push(new TextRun(runOptions));
+        runs.push(new TextRun({
+          text: textContent,
+          color: this.rgbToHex(style.color),
+          size: this.pxToHalfPoints(style.fontSize),
+          font: mainFont,
+          bold: parseInt(style.fontWeight) >= 600,
+          italics: style.fontStyle === 'italic'
+        }));
       } else if (child.nodeType === Node.ELEMENT_NODE) {
         const el = child as HTMLElement;
         const style = window.getComputedStyle(el);
-        const runOptions: any = { text: el.textContent?.trim() || '' };
-        runOptions.color = this.rgbToHex(style.color);
-        runOptions.size = this.pxToHalfPoints(style.fontSize);
-        runOptions.font = mainFont;
+        // 行内代码特殊处理
+        if (el.tagName.toUpperCase() === 'CODE') {
+          runs.push(new TextRun({
+            text: el.textContent ?? '',
+            style: "SourceCode",
+            shading: { type: ShadingType.CLEAR, fill: 'D3D3D3', color: "auto" },
+            font: codeFont,
+            color: this.rgbToHex(style.color),
+            size: this.pxToHalfPoints(style.fontSize)
+          }));
+          continue;
+        }
+        const runOptions: any = { text: el.textContent?.trim() || '', color: this.rgbToHex(style.color), size: this.pxToHalfPoints(style.fontSize), font: mainFont };
         switch (el.tagName.toUpperCase()) {
           case 'A':
-            runs.push(new ExternalHyperlink({ link: el.getAttribute('href') || '', children: [new TextRun({ text: el.textContent?.trim() || '', style: "Hyperlink", color: this.rgbToHex(style.color) || '0563C1', underline: {} })], }));
+            runs.push(new ExternalHyperlink({ link: el.getAttribute('href') || '', children: [new TextRun({ text: el.textContent?.trim() || '', style: "Hyperlink", color: this.rgbToHex(style.color) || '0563C1', underline: {} })] }));
             break;
           case 'DEL': runOptions.strike = true; runs.push(new TextRun(runOptions)); break;
           case 'STRONG':
@@ -562,12 +740,6 @@ export default class DocxExporterPlugin extends Plugin {
           case 'EM':
           case 'I': runOptions.italics = true; runs.push(new TextRun(runOptions)); break;
           case 'U': runOptions.underline = {}; runs.push(new TextRun(runOptions)); break;
-          case 'CODE':
-            runOptions.style = "SourceCode";
-            runOptions.shading = { type: ShadingType.CLEAR, fill: 'D3D3D3', color: "auto" };
-            runOptions.font = codeFont;
-            runs.push(new TextRun(runOptions));
-            break;
           case 'IMG':
             const imageRun = await this.createImageRun(el as HTMLImageElement, sourcePath);
             if (imageRun) runs.push(imageRun);
@@ -605,6 +777,8 @@ export default class DocxExporterPlugin extends Plugin {
     try {
       if (src.startsWith('http')) {
         pathForNotice = src;
+        this.currentImageIndex++;
+        new Notice(this.i18n.t("DOWNLOADING_IMAGE", this.currentImageIndex.toString(), this.totalNetworkImages.toString()));
         const response = await requestUrl({ url: src, method: 'GET' });
         if (response.status !== 200) {
           new Notice(this.i18n.t("DOWNLOAD_IMAGE_FAILED", src));
@@ -699,7 +873,24 @@ export default class DocxExporterPlugin extends Plugin {
     }
   }
 
-  private async htmlToDocxObjects(element: HTMLElement, bodyBgColor: string, isTopLevel: boolean, indentLevel: number, sourcePath: string): Promise<(Paragraph | Table)[]> {
+  private countNetworkImages(element: HTMLElement): number {
+    let count = 0;
+    const images = element.querySelectorAll('img');
+    images.forEach(img => {
+      if (img.src.startsWith('http')) {
+        count++;
+      }
+    });
+    return count;
+  }
+
+  private async htmlToDocxObjects(
+    element: HTMLElement,
+    bodyBgColor: string,
+    isTopLevel: boolean,
+    indentLevel: number,
+    sourcePath: string
+  ): Promise<(Paragraph | Table)[]> {
     const docxObjects: (Paragraph | Table)[] = [];
     const children = Array.from(element.childNodes);
     const paragraphStyles: any = {};
@@ -711,7 +902,8 @@ export default class DocxExporterPlugin extends Plugin {
     }
     const mainFont = { name: 'Times New Roman' };
     const codeFont = { name: 'Courier New' };
-
+    
+    // 如果没有子元素或只有空文本，则直接返回一个空段落
     if (!children.some(c => c.nodeType === Node.ELEMENT_NODE) && element.textContent?.trim()) {
       const inlineChildren = await this.parseInlineElements(element, sourcePath);
       if (inlineChildren.length > 0) { return [new Paragraph({ children: inlineChildren, font: mainFont })]; }
@@ -719,84 +911,100 @@ export default class DocxExporterPlugin extends Plugin {
     }
 
     for (let i = 0; i < children.length; i++) {
-        const child = children[i];
-        if (child.nodeType !== Node.ELEMENT_NODE) continue;
+      const child = children[i];
+      
+      // 修正：确保 child 是一个有效的元素节点
+      if (!(child instanceof HTMLElement)) continue;
 
-        const el = child as HTMLElement;
-        const tagName = el.tagName.toUpperCase();
-        let currentParagraphOptions: any = { ...paragraphStyles, font: mainFont };
+      const el = child as HTMLElement;
+      const tagName = el.tagName?.toUpperCase();
+      if (!tagName) continue;
 
-        switch (tagName) {
-            case 'H1':
-            case 'H2':
-            case 'H3':
-            case 'H4':
-            case 'H5':
-            case 'H6':
-                currentParagraphOptions.heading = HeadingLevel[tagName as keyof typeof HeadingLevel];
-                currentParagraphOptions.spacing = { after: 150 };
-                const headingChildren = await this.parseInlineElements(el, sourcePath);
-                if (headingChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: headingChildren })); }
-                break;
-            case 'P':
-            case 'DIV':
-                if (el.textContent?.trim() || el.querySelector('img')) {
-                    currentParagraphOptions.spacing = { after: 200 };
-                    const pChildren = await this.parseInlineElements(el, sourcePath);
-                    if (pChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: pChildren })); }
-                }
-                break;
-            case 'UL':
-            case 'OL':
-                docxObjects.push(...await this.parseListElement(el as HTMLUListElement | HTMLOListElement, 0, bodyBgColor, sourcePath));
-                break;
-            case 'HR':
-                docxObjects.push(new Paragraph({ thematicBreak: true }));
-                docxObjects.push(new Paragraph({ spacing: { after: 200 } }));
-                break;
-            case 'TABLE':
-                docxObjects.push(await this.parseTableElement(el as HTMLTableElement, bodyBgColor, sourcePath));
-                docxObjects.push(new Paragraph({}));
-                break;
-            case 'BLOCKQUOTE':
-                const quoteTable = await this.parseQuoteContent(el, sourcePath);
-                if (quoteTable) {
-                    docxObjects.push(quoteTable);
-                    docxObjects.push(new Paragraph({ spacing: { after: 200 } })); 
-                }
-                break;
-            case 'PRE':
-                const codeElement = el.querySelector('code');
-                if (codeElement) {
-                    currentParagraphOptions.style = "SourceCode";
-                    currentParagraphOptions.spacing = {};
-                    currentParagraphOptions.font = codeFont;
-                    currentParagraphOptions.shading = { type: ShadingType.CLEAR, fill: 'D3D3D3', color: "auto" };
-                    const preStyle = window.getComputedStyle(el);
-                    const codeStyle = window.getComputedStyle(codeElement);
-                    const langMatch = Array.from(codeElement.classList).find(cls => cls.startsWith('language-'));
-                    const lang = langMatch ? langMatch.substring('language-'.length) : null;
-                    const size = this.pxToHalfPoints(codeStyle.fontSize);
-
-                    const runs: TextRun[] = [];
-                    if (lang) {
-                        runs.push(new TextRun({ text: lang, italics: true, color: "888880", size: (size || 22) - 2 }));
-                        runs.push(new TextRun({ break: 2 }));
-                    }
-                    runs.push(...this.parseSyntaxHighlightedCode(codeElement, codeFont, size));
-                    docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: runs }));
-                }
-                break;
-            case 'A':
-                const linkTextRuns = await this.parseInlineElements(el, sourcePath);
-                const hyperlink = new ExternalHyperlink({ link: el.getAttribute('href') || '', children: linkTextRuns });
-                docxObjects.push(new Paragraph({ children: [hyperlink], font: mainFont }));
-                break;
-            default:
-                const defaultChildren = await this.parseInlineElements(el, sourcePath);
-                if (defaultChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: defaultChildren, spacing: { after: 200 } })); }
-                break;
+      let currentParagraphOptions: any = { ...paragraphStyles, font: mainFont };
+      
+      if (tagName.startsWith('H') && i > 0) {
+        const prevChild = children[i - 1] as HTMLElement;
+        if (prevChild && prevChild.tagName?.toUpperCase() !== 'HR' && prevChild.tagName?.toUpperCase() !== 'TABLE') {
+          docxObjects.push(new Paragraph({}));
         }
+      }
+
+      switch (tagName) {
+          case 'H1':
+          case 'H2':
+          case 'H3':
+          case 'H4':
+          case 'H5':
+          case 'H6':
+              currentParagraphOptions.heading = HeadingLevel[tagName as keyof typeof HeadingLevel];
+              currentParagraphOptions.spacing = { after: 150 };
+              const headingChildren = await this.parseInlineElements(el, sourcePath);
+              if (headingChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: headingChildren })); }
+              break;
+          case 'P':
+          case 'DIV':
+              if (el.textContent?.trim() || el.querySelector('img')) {
+                  currentParagraphOptions.spacing = { after: 200 };
+                  const pChildren = await this.parseInlineElements(el, sourcePath);
+                  if (pChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: pChildren })); }
+              }
+              break;
+          case 'UL':
+          case 'OL':
+              docxObjects.push(...await this.parseListElement(
+                el as HTMLUListElement | HTMLOListElement,
+                0,
+                bodyBgColor,
+                sourcePath
+              ));
+              break;
+          case 'HR':
+              docxObjects.push(new Paragraph({ thematicBreak: true }));
+              docxObjects.push(new Paragraph({ spacing: { after: 200 } }));
+              break;
+          case 'TABLE':
+              docxObjects.push(await this.parseTableElement(el as HTMLTableElement, bodyBgColor, sourcePath));
+              docxObjects.push(new Paragraph({}));
+              break;
+          case 'BLOCKQUOTE':
+              const quoteTable = await this.parseQuoteContent(el, sourcePath);
+              if (quoteTable) {
+                  docxObjects.push(quoteTable);
+                  docxObjects.push(new Paragraph({ spacing: { after: 200 } })); 
+              }
+              break;
+          case 'PRE':
+              const codeElement = el.querySelector('code');
+              if (codeElement) {
+                  currentParagraphOptions.style = "SourceCode";
+                  currentParagraphOptions.spacing = {};
+                  currentParagraphOptions.font = codeFont;
+                  currentParagraphOptions.shading = { type: ShadingType.CLEAR, fill: 'D3D3D3', color: "auto" };
+                  const preStyle = window.getComputedStyle(el);
+                  const codeStyle = window.getComputedStyle(codeElement);
+                  const langMatch = Array.from(codeElement.classList).find(cls => cls.startsWith('language-'));
+                  const lang = langMatch ? langMatch.substring('language-'.length) : null;
+                  const size = this.pxToHalfPoints(codeStyle.fontSize);
+
+                  const runs: TextRun[] = [];
+                  if (lang) {
+                      runs.push(new TextRun({ text: lang, italics: true, color: "888880", size: (size || 22) - 2 }));
+                      runs.push(new TextRun({ break: 2 }));
+                  }
+                  runs.push(...this.parseSyntaxHighlightedCode(codeElement, codeFont, size));
+                  docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: runs }));
+              }
+              break;
+          case 'A':
+              const linkTextRuns = await this.parseInlineElements(el, sourcePath);
+              const hyperlink = new ExternalHyperlink({ link: el.getAttribute('href') || '', children: linkTextRuns });
+              docxObjects.push(new Paragraph({ children: [hyperlink], font: mainFont }));
+              break;
+          default:
+              const defaultChildren = await this.parseInlineElements(el, sourcePath);
+              if (defaultChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: defaultChildren, spacing: { after: 200 } })); }
+              break;
+      }
     }
     return docxObjects;
   }
@@ -810,7 +1018,8 @@ export default class DocxExporterPlugin extends Plugin {
     for (const child of nodes) {
       if (child.nodeType === Node.ELEMENT_NODE) {
         const el = child as HTMLElement;
-        const tagName = el.tagName.toUpperCase();
+        const tagName = el.tagName?.toUpperCase();
+        if (!tagName) continue;
 
         if (tagName === 'BLOCKQUOTE') {
           const nestedQuoteTable = await this.parseQuoteContent(el, sourcePath, indentLevel + 1);
@@ -914,47 +1123,59 @@ export default class DocxExporterPlugin extends Plugin {
     return quoteTable;
   }
   
-  private async parseListElementForQuote(listEl: HTMLUListElement | HTMLOListElement, indentLevel: number, sourcePath: string): Promise<Paragraph[]> {
-      const paragraphs: Paragraph[] = [];
-      const listItems = Array.from(listEl.children).filter(child => child.tagName === 'LI');
-      const listType = listEl.tagName === 'OL' ? 'number' : 'bullet';
-      const mainFont = { name: 'Times New Roman' };
-      
-      for (const li of listItems) {
-          const liElement = li as HTMLLIElement;
-          const contentContainer = document.createElement('div');
-          let nestedList: HTMLUListElement | HTMLOListElement | null = null;
-          for (const child of Array.from(liElement.childNodes)) {
-              if (child.nodeType === Node.ELEMENT_NODE && (child.nodeName === 'UL' || child.nodeName === 'OL')) {
-                  nestedList = child as HTMLUListElement | HTMLOListElement;
-              } else {
-                  contentContainer.appendChild(child.cloneNode(true));
-              }
-          }
-          
-          if (contentContainer.textContent?.trim() || contentContainer.querySelector('img')) {
-              const inlineChildren = await this.parseInlineElements(contentContainer, sourcePath);
-              const paragraphProperties: any = {
-                  children: inlineChildren,
-                  spacing: { after: 100 },
-                  indent: { left: 200 * (indentLevel + 1) },
-                  font: mainFont
-              };
-              
-              if (listType === 'bullet') {
-                  paragraphProperties.bullet = { level: indentLevel };
-              } else {
-                  paragraphProperties.numbering = { reference: "default-numbering", level: indentLevel };
-              }
-              
-              paragraphs.push(new Paragraph(paragraphProperties));
-          }
+  private async parseListElementForQuote(
+    listEl: HTMLUListElement | HTMLOListElement,
+    indentLevel: number,
+    sourcePath: string,
+    numberingRef?: string
+  ): Promise<Paragraph[]> {
+    const paragraphs: Paragraph[] = [];
+    const listItems = Array.from(listEl.children).filter(child => child.tagName === 'LI');
+    const listType = listEl.tagName === 'OL' ? 'number' : 'bullet';
+    const mainFont = { name: 'Times New Roman' };
 
-          if (nestedList) {
-              paragraphs.push(...await this.parseListElementForQuote(nestedList, indentLevel + 1, sourcePath));
-          }
+    // 为每个有序列表分配唯一 reference
+    let currentNumberingRef = numberingRef;
+    if (listType === 'number' && !numberingRef) {
+      currentNumberingRef = `default-numbering-${this.numberingCounter++}`;
+      this.numberingReferences.add(currentNumberingRef);
+    }
+
+    for (const li of listItems) {
+      const liElement = li as HTMLLIElement;
+      const contentContainer = document.createElement('div');
+      let nestedList: HTMLUListElement | HTMLOListElement | null = null;
+      for (const child of Array.from(liElement.childNodes)) {
+        if (child.nodeType === Node.ELEMENT_NODE && (child.nodeName === 'UL' || child.nodeName === 'OL')) {
+          nestedList = child as HTMLUListElement | HTMLOListElement;
+        } else {
+          contentContainer.appendChild(child.cloneNode(true));
+        }
       }
-      return paragraphs;
+
+      if (contentContainer.textContent?.trim() || contentContainer.querySelector('img')) {
+        const inlineChildren = await this.parseInlineElements(contentContainer, sourcePath);
+        const paragraphProperties: any = {
+          children: inlineChildren,
+          spacing: { after: 100 },
+          indent: { left: 720 * (indentLevel + 1) }, // 优化缩进
+          font: mainFont
+        };
+
+        if (listType === 'bullet') {
+          paragraphProperties.bullet = { level: indentLevel };
+        } else {
+          paragraphProperties.numbering = { reference: currentNumberingRef, level: indentLevel };
+        }
+
+        paragraphs.push(new Paragraph(paragraphProperties));
+      }
+
+      if (nestedList) {
+        paragraphs.push(...await this.parseListElementForQuote(nestedList, indentLevel + 1, sourcePath, currentNumberingRef));
+      }
+    }
+    return paragraphs;
   }
 
   private async parsePreElementForQuote(preElement: HTMLElement, indentLevel: number, sourcePath: string): Promise<Paragraph | null> {
@@ -1096,16 +1317,34 @@ export default class DocxExporterPlugin extends Plugin {
 
       await MarkdownRenderer.render(this.app, markdownContent, tempDiv, sourcePath, this);
 
+      // 重置图片计数器并显示开始导出提示
+      this.totalNetworkImages = this.countNetworkImages(tempDiv);
+      this.currentImageIndex = 0;
+      new Notice(this.i18n.t("EXPORTING_START"));
+
       const bodyBgColor = this.rgbToHex(window.getComputedStyle(document.body).backgroundColor);
 
       const docxObjects = await this.htmlToDocxObjects(tempDiv, bodyBgColor, true, 0, sourcePath);
 
+      // 修复：定义 titleParagraph
       const title = activeFile.basename;
       const titleParagraph = new Paragraph({ text: title, heading: HeadingLevel.TITLE, alignment: AlignmentType.CENTER, spacing: { after: 400 }, font: { name: 'Times New Roman' } });
 
+      // 生成所有需要的 numbering 配置
+      const numberingConfig = Array.from(this.numberingReferences).map(ref => ({
+        reference: ref,
+        levels: [
+          { level: 0, format: "decimal", text: "%1.", alignment: AlignmentType.START, indent: { left: 720, hanging: 360 } },
+          { level: 1, format: "decimal", text: "%1.%2.", alignment: AlignmentType.START, indent: { left: 1440, hanging: 360 } },
+          { level: 2, format: "decimal", text: "%1.%2.%3.", alignment: AlignmentType.START, indent: { left: 2160, hanging: 360 } },
+          { level: 3, format: "decimal", text: "%1.%2.%3.%4.", alignment: AlignmentType.START, indent: { left: 2880, hanging: 360 } },
+          { level: 4, format: "decimal", text: "%1.%2.%3.%4.%5.", alignment: AlignmentType.START, indent: { left: 3600, hanging: 360 } },
+        ],
+      }));
+
       const doc = new Document({
         numbering: {
-          config: [{
+          config: numberingConfig.length > 0 ? numberingConfig : [{
             reference: "default-numbering",
             levels: [
               { level: 0, format: "decimal", text: "%1.", alignment: AlignmentType.START, indent: { left: 720, hanging: 360 } },
@@ -1114,7 +1353,7 @@ export default class DocxExporterPlugin extends Plugin {
               { level: 3, format: "decimal", text: "%1.%2.%3.%4.", alignment: AlignmentType.START, indent: { left: 2880, hanging: 360 } },
               { level: 4, format: "decimal", text: "%1.%2.%3.%4.%5.", alignment: AlignmentType.START, indent: { left: 3600, hanging: 360 } },
             ],
-          }, ],
+          }],
         },
         sections: [{
           properties: {},
@@ -1145,6 +1384,9 @@ export default class DocxExporterPlugin extends Plugin {
       new Notice(this.i18n.t("EXPORT_FAILED"));
       console.error(this.i18n.t("EXPORT_FAILED"), error);
     } finally {
+      // 重置计数器
+      this.totalNetworkImages = 0;
+      this.currentImageIndex = 0;
       if (document.body.contains(tempDiv)) {
         document.body.removeChild(tempDiv);
       }
