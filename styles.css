@@ -1,0 +1,25 @@
+/* Temporary div for DOCX export rendering */
+.docx-export-temp-div {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    width: 800px;
+    height: auto;
+}
+
+/* Default styles for DOCX export elements */
+.docx-export-temp-div th {
+    background-color: #E7E6E6;
+}
+
+.docx-export-temp-div code {
+    background-color: #D3D3D3;
+}
+
+.docx-export-temp-div pre {
+    background-color: #D3D3D3;
+}
+
+.docx-export-temp-div blockquote {
+    background-color: #F0F0F0;
+}

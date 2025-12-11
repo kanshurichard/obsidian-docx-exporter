@@ -5,7 +5,9 @@ import {
   MarkdownRenderer,
   Modal,
   TFile,
-  requestUrl
+  requestUrl,
+  getLanguage,
+  Component
 } from 'obsidian';
 import {
   Document,
@@ -413,18 +415,18 @@ class I18N {
   private translations: Record<string, string>;
 
   constructor(app: App) {
-    let lang = app.vault.config.language;
+    let lang = getLanguage();
     if (!lang) {
-        lang = window.localStorage.getItem('language') || 'en';
+      lang = 'en';
     }
-    
+
     if (locales[lang]) {
-        this.lang = lang;
+      this.lang = lang;
     } else if (lang.includes('-')) {
-        const baseLang = lang.split('-')[0];
-        this.lang = locales[baseLang] ? baseLang : 'en';
+      const baseLang = lang.split('-')[0];
+      this.lang = locales[baseLang] ? baseLang : 'en';
     } else {
-        this.lang = 'en';
+      this.lang = 'en';
     }
     this.translations = locales[this.lang] || locales['en'];
   }
@@ -471,16 +473,23 @@ export default class DocxExporterPlugin extends Plugin {
 
   async onload() {
     this.i18n = new I18N(this.app);
-    console.log(this.i18n.t("LOADING_PLUGIN"));
     this.addRibbonIcon('file-output', this.i18n.t("EXPORT_COMMAND_NAME"), () => this.exportCurrentNoteToDocx());
     this.addCommand({
       id: 'export-to-docx',
       name: this.i18n.t("EXPORT_COMMAND_NAME"),
-      callback: () => this.exportCurrentNoteToDocx()
+      checkCallback: (checking: boolean) => {
+        const activeFile = this.app.workspace.getActiveFile();
+        if (activeFile) {
+          if (!checking) {
+            this.exportCurrentNoteToDocx();
+          }
+          return true;
+        }
+        return false;
+      }
     });
   }
   onunload() {
-    console.log(this.i18n.t("UNLOADING_PLUGIN"));
   }
 
   // px转为docx字体单位
@@ -493,7 +502,7 @@ export default class DocxExporterPlugin extends Plugin {
   private rgbToHex(rgb: string): string | undefined {
     if (!rgb?.startsWith('rgb') || rgb === 'rgba(0, 0, 0, 0)') return undefined;
     const parts = rgb.match(/^rgb(?:a)?\((\d+),\s*(\d+),\s*(\d+)/);
-    return parts ? [1,2,3].map(i=>('0'+parseInt(parts[i]).toString(16)).slice(-2)).join('') : undefined;
+    return parts ? [1, 2, 3].map(i => ('0' + parseInt(parts[i]).toString(16)).slice(-2)).join('') : undefined;
   }
 
   // base64转ArrayBuffer
@@ -519,7 +528,7 @@ export default class DocxExporterPlugin extends Plugin {
       } else if (view.getUint32(0) === 0x89504E47) { // PNG
         return { width: view.getUint32(16), height: view.getUint32(20) };
       }
-    } catch {}
+    } catch { }
     return null;
   }
 
@@ -623,16 +632,16 @@ export default class DocxExporterPlugin extends Plugin {
   private async parseTableElement(tableEl: HTMLElement, bodyBgColor: string, sourcePath: string): Promise<Table> {
     const rows: TableRow[] = [];
     let isFirstRow = true;  // 标记是否为表头行
-    
+
     // 遍历表格行
     for (const row of Array.from(tableEl.querySelectorAll('tr'))) {
       const cells: TableCell[] = [];
-      
+
       // 遍历单元格
       for (const cell of Array.from(row.querySelectorAll('th, td'))) {
         const cellStyle = window.getComputedStyle(cell);
         const isHeader = cell.tagName.toUpperCase() === 'TH' || isFirstRow;
-        
+
         // 处理单元格内容
         const inlineElements = await this.parseInlineElements(cell, sourcePath);
         const paragraph = new Paragraph({
@@ -653,7 +662,7 @@ export default class DocxExporterPlugin extends Plugin {
           },
           ...(isHeader && {
             shading: {
-              fill: "E7E6E6",  // 浅灰色背景
+              fill: this.rgbToHex(cellStyle.backgroundColor) || "E7E6E6",
               type: ShadingType.CLEAR,
               color: "auto"
             },
@@ -662,8 +671,8 @@ export default class DocxExporterPlugin extends Plugin {
           verticalAlign: "center"
         }));
       }
-      
-      rows.push(new TableRow({ 
+
+      rows.push(new TableRow({
         children: cells,
         tableHeader: isFirstRow // 标记表头行
       }));
@@ -722,7 +731,7 @@ export default class DocxExporterPlugin extends Plugin {
           runs.push(new TextRun({
             text: el.textContent ?? '',
             style: "SourceCode",
-            shading: { type: ShadingType.CLEAR, fill: 'D3D3D3', color: "auto" },
+            shading: { type: ShadingType.CLEAR, fill: this.rgbToHex(style.backgroundColor) || 'D3D3D3', color: "auto" },
             font: codeFont,
             color: this.rgbToHex(style.color),
             size: this.pxToHalfPoints(style.fontSize)
@@ -771,7 +780,7 @@ export default class DocxExporterPlugin extends Plugin {
     let buffer: ArrayBuffer | null = null;
     let imageExtension: string | null = null;
     let pathForNotice: string = 'unknown path';
-    
+
     const isLocalPath = src.startsWith('app://') || src.startsWith('capacitor://');
 
     try {
@@ -795,19 +804,17 @@ export default class DocxExporterPlugin extends Plugin {
         }
         pathForNotice = pathFromEmbed;
         const file = this.app.metadataCache.getFirstLinkpathDest(pathFromEmbed, sourcePath);
-        
+
         if (!file || !(file instanceof TFile)) {
           new Notice(this.i18n.t("LOCAL_IMAGE_NOT_FOUND", pathFromEmbed));
-          console.error(this.i18n.t("LOCAL_IMAGE_NOT_FOUND", pathFromEmbed), file);
           return null;
         }
-        
+
         try {
           buffer = await this.app.vault.readBinary(file);
           imageExtension = file.extension;
         } catch (readError) {
           new Notice(this.i18n.t("FILE_READ_FAILED", file.path));
-          console.error(this.i18n.t("FILE_READ_FAILED", file.path), readError);
           return null;
         }
 
@@ -868,7 +875,6 @@ export default class DocxExporterPlugin extends Plugin {
     } catch (error) {
       const displayPath = pathForNotice.length > 50 ? `${pathForNotice.substring(0, 50)}...` : pathForNotice;
       new Notice(this.i18n.t("IMAGE_PROCESSING_ERROR", displayPath));
-      console.error(this.i18n.t("IMAGE_PROCESSING_ERROR", pathForNotice), error);
       return null;
     }
   }
@@ -902,7 +908,7 @@ export default class DocxExporterPlugin extends Plugin {
     }
     const mainFont = { name: 'Times New Roman' };
     const codeFont = { name: 'Courier New' };
-    
+
     // 如果没有子元素或只有空文本，则直接返回一个空段落
     if (!children.some(c => c.nodeType === Node.ELEMENT_NODE) && element.textContent?.trim()) {
       const inlineChildren = await this.parseInlineElements(element, sourcePath);
@@ -912,7 +918,7 @@ export default class DocxExporterPlugin extends Plugin {
 
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
-      
+
       // 修正：确保 child 是一个有效的元素节点
       if (!(child instanceof HTMLElement)) continue;
 
@@ -921,7 +927,7 @@ export default class DocxExporterPlugin extends Plugin {
       if (!tagName) continue;
 
       let currentParagraphOptions: any = { ...paragraphStyles, font: mainFont };
-      
+
       if (tagName.startsWith('H') && i > 0) {
         const prevChild = children[i - 1] as HTMLElement;
         if (prevChild && prevChild.tagName?.toUpperCase() !== 'HR' && prevChild.tagName?.toUpperCase() !== 'TABLE') {
@@ -930,85 +936,85 @@ export default class DocxExporterPlugin extends Plugin {
       }
 
       switch (tagName) {
-          case 'H1':
-          case 'H2':
-          case 'H3':
-          case 'H4':
-          case 'H5':
-          case 'H6':
-              currentParagraphOptions.heading = HeadingLevel[tagName as keyof typeof HeadingLevel];
-              currentParagraphOptions.spacing = { after: 150 };
-              const headingChildren = await this.parseInlineElements(el, sourcePath);
-              if (headingChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: headingChildren })); }
-              break;
-          case 'P':
-          case 'DIV':
-              if (el.textContent?.trim() || el.querySelector('img')) {
-                  currentParagraphOptions.spacing = { after: 200 };
-                  const pChildren = await this.parseInlineElements(el, sourcePath);
-                  if (pChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: pChildren })); }
-              }
-              break;
-          case 'UL':
-          case 'OL':
-              docxObjects.push(...await this.parseListElement(
-                el as HTMLUListElement | HTMLOListElement,
-                0,
-                bodyBgColor,
-                sourcePath
-              ));
-              break;
-          case 'HR':
-              docxObjects.push(new Paragraph({ thematicBreak: true }));
-              docxObjects.push(new Paragraph({ spacing: { after: 200 } }));
-              break;
-          case 'TABLE':
-              docxObjects.push(await this.parseTableElement(el as HTMLTableElement, bodyBgColor, sourcePath));
-              docxObjects.push(new Paragraph({}));
-              break;
-          case 'BLOCKQUOTE':
-              const quoteTable = await this.parseQuoteContent(el, sourcePath);
-              if (quoteTable) {
-                  docxObjects.push(quoteTable);
-                  docxObjects.push(new Paragraph({ spacing: { after: 200 } })); 
-              }
-              break;
-          case 'PRE':
-              const codeElement = el.querySelector('code');
-              if (codeElement) {
-                  currentParagraphOptions.style = "SourceCode";
-                  currentParagraphOptions.spacing = {};
-                  currentParagraphOptions.font = codeFont;
-                  currentParagraphOptions.shading = { type: ShadingType.CLEAR, fill: 'D3D3D3', color: "auto" };
-                  const preStyle = window.getComputedStyle(el);
-                  const codeStyle = window.getComputedStyle(codeElement);
-                  const langMatch = Array.from(codeElement.classList).find(cls => cls.startsWith('language-'));
-                  const lang = langMatch ? langMatch.substring('language-'.length) : null;
-                  const size = this.pxToHalfPoints(codeStyle.fontSize);
+        case 'H1':
+        case 'H2':
+        case 'H3':
+        case 'H4':
+        case 'H5':
+        case 'H6':
+          currentParagraphOptions.heading = HeadingLevel[tagName as keyof typeof HeadingLevel];
+          currentParagraphOptions.spacing = { after: 150 };
+          const headingChildren = await this.parseInlineElements(el, sourcePath);
+          if (headingChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: headingChildren })); }
+          break;
+        case 'P':
+        case 'DIV':
+          if (el.textContent?.trim() || el.querySelector('img')) {
+            currentParagraphOptions.spacing = { after: 200 };
+            const pChildren = await this.parseInlineElements(el, sourcePath);
+            if (pChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: pChildren })); }
+          }
+          break;
+        case 'UL':
+        case 'OL':
+          docxObjects.push(...await this.parseListElement(
+            el as HTMLUListElement | HTMLOListElement,
+            0,
+            bodyBgColor,
+            sourcePath
+          ));
+          break;
+        case 'HR':
+          docxObjects.push(new Paragraph({ thematicBreak: true }));
+          docxObjects.push(new Paragraph({ spacing: { after: 200 } }));
+          break;
+        case 'TABLE':
+          docxObjects.push(await this.parseTableElement(el as HTMLTableElement, bodyBgColor, sourcePath));
+          docxObjects.push(new Paragraph({}));
+          break;
+        case 'BLOCKQUOTE':
+          const quoteTable = await this.parseQuoteContent(el, sourcePath);
+          if (quoteTable) {
+            docxObjects.push(quoteTable);
+            docxObjects.push(new Paragraph({ spacing: { after: 200 } }));
+          }
+          break;
+        case 'PRE':
+          const codeElement = el.querySelector('code');
+          if (codeElement) {
+            currentParagraphOptions.style = "SourceCode";
+            currentParagraphOptions.spacing = {};
+            currentParagraphOptions.font = codeFont;
+            currentParagraphOptions.shading = { type: ShadingType.CLEAR, fill: 'D3D3D3', color: "auto" };
+            const preStyle = window.getComputedStyle(el);
+            const codeStyle = window.getComputedStyle(codeElement);
+            const langMatch = Array.from(codeElement.classList).find(cls => cls.startsWith('language-'));
+            const lang = langMatch ? langMatch.substring('language-'.length) : null;
+            const size = this.pxToHalfPoints(codeStyle.fontSize);
 
-                  const runs: TextRun[] = [];
-                  if (lang) {
-                      runs.push(new TextRun({ text: lang, italics: true, color: "888880", size: (size || 22) - 2 }));
-                      runs.push(new TextRun({ break: 2 }));
-                  }
-                  runs.push(...this.parseSyntaxHighlightedCode(codeElement, codeFont, size));
-                  docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: runs }));
-              }
-              break;
-          case 'A':
-              const linkTextRuns = await this.parseInlineElements(el, sourcePath);
-              const hyperlink = new ExternalHyperlink({ link: el.getAttribute('href') || '', children: linkTextRuns });
-              docxObjects.push(new Paragraph({ children: [hyperlink], font: mainFont }));
-              break;
-          default:
-              const defaultChildren = await this.parseInlineElements(el, sourcePath);
-              if (defaultChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: defaultChildren, spacing: { after: 200 } })); }
-              break;
+            const runs: TextRun[] = [];
+            if (lang) {
+              runs.push(new TextRun({ text: lang, italics: true, color: "888880", size: (size || 22) - 2 }));
+              runs.push(new TextRun({ break: 2 }));
+            }
+            runs.push(...this.parseSyntaxHighlightedCode(codeElement, codeFont, size));
+            docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: runs }));
+          }
+          break;
+        case 'A':
+          const linkTextRuns = await this.parseInlineElements(el, sourcePath);
+          const hyperlink = new ExternalHyperlink({ link: el.getAttribute('href') || '', children: linkTextRuns });
+          docxObjects.push(new Paragraph({ children: [hyperlink], font: mainFont }));
+          break;
+        default:
+          const defaultChildren = await this.parseInlineElements(el, sourcePath);
+          if (defaultChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: defaultChildren, spacing: { after: 200 } })); }
+          break;
       }
     }
     return docxObjects;
   }
-  
+
   private async parseQuoteContent(blockquoteElement: HTMLElement, sourcePath: string, indentLevel: number = 0): Promise<Table | null> {
     const children: (Paragraph | Table)[] = [];
     const nodes = Array.from(blockquoteElement.childNodes);
@@ -1029,8 +1035,8 @@ export default class DocxExporterPlugin extends Plugin {
         } else if (tagName === 'P' || tagName === 'DIV') {
           const inlineChildren = await this.parseInlineElements(el, sourcePath);
           if (inlineChildren.length > 0 || el.textContent?.trim().length > 0) {
-            children.push(new Paragraph({ 
-              children: inlineChildren, 
+            children.push(new Paragraph({
+              children: inlineChildren,
               spacing: { after: 100 },
               indent: { left: 200 * (indentLevel + 1) },
               font: mainFont
@@ -1054,15 +1060,15 @@ export default class DocxExporterPlugin extends Plugin {
           const hyperlink = new ExternalHyperlink({ link: el.getAttribute('href') || '', children: linkTextRuns });
           children.push(new Paragraph({ children: [hyperlink], font: mainFont }));
         } else {
-            const inlineChildren = await this.parseInlineElements(el, sourcePath);
-            if (inlineChildren.length > 0) {
-                children.push(new Paragraph({
-                    children: inlineChildren,
-                    spacing: { after: 100 },
-                    indent: { left: 200 * (indentLevel + 1) },
-                    font: mainFont
-                }));
-            }
+          const inlineChildren = await this.parseInlineElements(el, sourcePath);
+          if (inlineChildren.length > 0) {
+            children.push(new Paragraph({
+              children: inlineChildren,
+              spacing: { after: 100 },
+              indent: { left: 200 * (indentLevel + 1) },
+              font: mainFont
+            }));
+          }
         }
       } else if (child.nodeType === Node.TEXT_NODE && child.textContent) {
         const lines = child.textContent.split('\n');
@@ -1071,8 +1077,8 @@ export default class DocxExporterPlugin extends Plugin {
             const tempSpan = document.createElement('span');
             tempSpan.textContent = line.trim();
             const inlineRuns = await this.parseInlineElements(tempSpan, sourcePath);
-            children.push(new Paragraph({ 
-              children: inlineRuns, 
+            children.push(new Paragraph({
+              children: inlineRuns,
               spacing: { after: 100 },
               indent: { left: 200 * (indentLevel + 1) },
               font: mainFont
@@ -1085,10 +1091,10 @@ export default class DocxExporterPlugin extends Plugin {
     if (children.length === 0) {
       return null;
     }
-    
+
     const quoteCell = new TableCell({
       children: children,
-      shading: { type: ShadingType.CLEAR, fill: 'F0F0F0', color: "auto" },
+      shading: { type: ShadingType.CLEAR, fill: this.rgbToHex(window.getComputedStyle(blockquoteElement).backgroundColor) || 'F0F0F0', color: "auto" },
       borders: {
         top: { style: BorderStyle.NONE },
         bottom: { style: BorderStyle.NONE },
@@ -1122,7 +1128,7 @@ export default class DocxExporterPlugin extends Plugin {
 
     return quoteTable;
   }
-  
+
   private async parseListElementForQuote(
     listEl: HTMLUListElement | HTMLOListElement,
     indentLevel: number,
@@ -1179,40 +1185,45 @@ export default class DocxExporterPlugin extends Plugin {
   }
 
   private async parsePreElementForQuote(preElement: HTMLElement, indentLevel: number, sourcePath: string): Promise<Paragraph | null> {
-      const codeElement = preElement.querySelector('code');
-      if (!codeElement) return null;
+    const codeElement = preElement.querySelector('code');
+    if (!codeElement) return null;
 
-      const preStyle = window.getComputedStyle(preElement);
-      const codeStyle = window.getComputedStyle(codeElement);
-      const preBgColor = this.rgbToHex(preStyle.backgroundColor) || 'F0F0F0';
-      const codeFont = { name: 'Courier New' };
-      const size = this.pxToHalfPoints(codeStyle.fontSize);
+    const preStyle = window.getComputedStyle(preElement);
+    const codeStyle = window.getComputedStyle(codeElement);
+    const preBgColor = this.rgbToHex(preStyle.backgroundColor) || 'F0F0F0';
+    const codeFont = { name: 'Courier New' };
+    const size = this.pxToHalfPoints(codeStyle.fontSize);
 
-      const runs: TextRun[] = [];
-      const langMatch = Array.from(codeElement.classList).find(cls => cls.startsWith('language-'));
-      const lang = langMatch ? langMatch.substring('language-'.length) : null;
-      if (lang) {
-          runs.push(new TextRun({ text: lang, italics: true, color: "888880", size: (size || 22) - 2 }));
-          runs.push(new TextRun({ break: 2 }));
-      }
-      runs.push(...this.parseSyntaxHighlightedCode(codeElement, codeFont, size));
-      
-      const paragraphOptions = {
-          style: "SourceCode",
-          spacing: { after: 100 },
-          indent: { left: 200 * (indentLevel + 1) },
-          shading: { type: ShadingType.CLEAR, fill: 'D3D3D3', color: "auto" },
-          font: codeFont
-      };
-      
-      return new Paragraph({ ...paragraphOptions, children: runs });
+    const runs: TextRun[] = [];
+    const langMatch = Array.from(codeElement.classList).find(cls => cls.startsWith('language-'));
+    const lang = langMatch ? langMatch.substring('language-'.length) : null;
+    if (lang) {
+      runs.push(new TextRun({ text: lang, italics: true, color: "888880", size: (size || 22) - 2 }));
+      runs.push(new TextRun({ break: 2 }));
+    }
+    runs.push(...this.parseSyntaxHighlightedCode(codeElement, codeFont, size));
+
+    const paragraphOptions = {
+      style: "SourceCode",
+      spacing: { after: 100 },
+      indent: { left: 200 * (indentLevel + 1) },
+      shading: { type: ShadingType.CLEAR, fill: preBgColor, color: "auto" },
+      font: codeFont
+    };
+
+    return new Paragraph({ ...paragraphOptions, children: runs });
   }
 
   // --- 文件保存与主逻辑 ---
 
   private async saveFile(filePath: string, data: ArrayBuffer) {
+    const file = this.app.vault.getAbstractFileByPath(filePath);
     try {
-      await this.app.vault.adapter.writeBinary(filePath, data);
+      if (file instanceof TFile) {
+        await this.app.vault.modifyBinary(file, data);
+      } else {
+        await this.app.vault.createBinary(filePath, data);
+      }
       new Notice(this.i18n.t("EXPORT_SUCCESSFUL", filePath));
     } catch (error) {
       new Notice(this.i18n.t("SAVE_FAILED", error.message));
@@ -1302,20 +1313,16 @@ export default class DocxExporterPlugin extends Plugin {
     if (!activeFile) { new Notice(this.i18n.t("NO_ACTIVE_FILE")); return; }
 
     const tempDiv = document.createElement('div');
-    Object.assign(tempDiv.style, {
-      position: 'absolute',
-      top: '-9999px',
-      left: '-9999px',
-      width: '800px',
-      height: 'auto'
-    });
+    tempDiv.addClass('docx-export-temp-div');
 
     try {
       document.body.appendChild(tempDiv);
       const markdownContent = await this.app.vault.read(activeFile);
       const sourcePath = activeFile.path;
 
-      await MarkdownRenderer.render(this.app, markdownContent, tempDiv, sourcePath, this);
+      const component = new Component();
+      await MarkdownRenderer.render(this.app, markdownContent, tempDiv, sourcePath, component);
+      component.unload();
 
       // 重置图片计数器并显示开始导出提示
       this.totalNetworkImages = this.countNetworkImages(tempDiv);
@@ -1366,7 +1373,7 @@ export default class DocxExporterPlugin extends Plugin {
       const fixedBlob = await this.fixDocxBlobAuto(originalBlob);
 
       const buffer = await fixedBlob.arrayBuffer();
-      
+
       const filePath = activeFile.path.replace(/\.md$/, '.docx');
 
       const fileExists = await this.app.vault.adapter.exists(filePath);
@@ -1379,10 +1386,9 @@ export default class DocxExporterPlugin extends Plugin {
         await this.saveFile(filePath, buffer);
         new Notice(this.i18n.t("FILE_SAVE_LOCATION_NOTICE"));
       }
-      
+
     } catch (error) {
       new Notice(this.i18n.t("EXPORT_FAILED"));
-      console.error(this.i18n.t("EXPORT_FAILED"), error);
     } finally {
       // 重置计数器
       this.totalNetworkImages = 0;

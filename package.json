@@ -1,6 +1,6 @@
 {
   "name": "obsidian-docx-exporter",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "An Obsidian plugin that exports notes to DOCX format without external dependencies.",
   "main": "main.js",
   "scripts": {
@@ -11,18 +11,19 @@
     "obsidian",
     "plugin",
     "docx",
-	"word",
+    "word",
     "export"
   ],
   "author": "Kan Zhang",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^16.11.6",
     "@types/jszip": "^3.4.1",
-    "obsidian": "latest",
-    "esbuild": "^0.23.0",
-    "typescript": "^5.5.3",
+    "@types/node": "^16.11.6",
+    "builtin-modules": "^5.0.0",
+    "docx": "^8.5.0",
+    "esbuild": "^0.27.1",
     "jszip": "^3.10.1",
-    "docx": "^8.5.0"
+    "obsidian": "latest",
+    "typescript": "^5.5.3"
   }
 }

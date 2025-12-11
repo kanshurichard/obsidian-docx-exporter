@@ -1,11 +1,10 @@
 {
 	"id": "docx-exporter",
 	"name": "DOCX Exporter",
-	"version": "1.0.1",
-	"minAppVersion": "1.0.0",
+	"version": "1.0.2",
+	"minAppVersion": "1.8.0",
 	"description": "Export to Microsoft docx files, mobile devices supported",
 	"author": "Kanshurichard",
 	"authorUrl": "https://kanzhang.net/",
-	"fundingUrl": "",
 	"isDesktopOnly": false
 }
