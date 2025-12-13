@@ -5,6 +5,9 @@
 ## 简介
 DOCX Exporter 是一个为 Obsidian 设计的插件，旨在帮助用户将笔记内容轻松导出为 DOCX 格式。
 
+<img width="1403" height="959" alt="截屏2025-12-13 20 47 43" src="https://github.com/user-attachments/assets/5fd67335-10bb-4f5f-81ef-866e71813e70" />
+
+
 此插件最大的优势在于其**零外部依赖性**。它不需要安装额外的外部工具，如 Pandoc，因此可以在 Obsidian 支持的所有平台（包括桌面、手机和 iPad）上无缝运行，为您提供一致的导出体验。
 
 ## 功能亮点
