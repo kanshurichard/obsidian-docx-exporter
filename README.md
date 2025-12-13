@@ -5,6 +5,9 @@
 ## Introduction
 DOCX Exporter is a plugin designed for Obsidian, aiming to help users easily export note content into DOCX format.
 
+<img width="1403" height="959" alt="截屏2025-12-13 20 47 43" src="https://github.com/user-attachments/assets/d2d5b9af-4f0d-4f62-9c1d-e787d939bb1c" />
+
+
 The biggest advantage of this plugin is its **zero external dependencies**. It does not require installing additional external tools like Pandoc, allowing it to run seamlessly on all platforms supported by Obsidian (including desktop, mobile, and iPad), providing you with a consistent export experience.
 
 ## Key Features
