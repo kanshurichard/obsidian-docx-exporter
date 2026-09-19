@@ -20,8 +20,12 @@ import {
   TableRow,
   TableCell,
   WidthType,
+  TableLayoutType,
   ShadingType,
   ExternalHyperlink,
+  InternalHyperlink,
+  Bookmark,
+  PageBreak,
   IBordersOptions,
   BorderStyle,
   ImageRun,
@@ -29,6 +33,9 @@ import {
   ITableCellOptions
 } from 'docx';
 import * as JSZip from 'jszip';
+
+// 行内内容：文本、图片、外部链接、指向文档内书签的内部链接，以及书签本身
+type InlineRun = TextRun | ExternalHyperlink | InternalHyperlink | ImageRun | Bookmark;
 
 // --- 多语言支持 ---
 const locales = {
@@ -58,7 +65,9 @@ const locales = {
     "BUTTON_SAVE": "Save",
     "INVALID_FILE_PATH": "Invalid file path. Please enter a valid path.",
     "EXPORTING_START": "Starting DOCX export...",
-    "DOWNLOADING_IMAGE": "Downloading image {0} of {1}..."
+    "DOWNLOADING_IMAGE": "Downloading image {0} of {1}...",
+    "SVG_CONVERTING": "Converting SVG image: {0}",
+    "SVG_CONVERT_FAILED": "SVG conversion failed for: {0}, embedding the original file."
   },
   zh: {
     "PLUGIN_NAME": "DOCX 导出器",
@@ -87,7 +96,9 @@ const locales = {
     "INVALID_FILE_PATH": "无效的文件路径。请输入一个有效的路径。",
     "FILE_SAVE_LOCATION_NOTICE": "已将 DOCX 文件导出到和笔记文件相同的文件夹内。",
     "EXPORTING_START": "开始导出 DOCX...",
-    "DOWNLOADING_IMAGE": "正在下载第 {0} 张图片，共 {1} 张..."
+    "DOWNLOADING_IMAGE": "正在下载第 {0} 张图片，共 {1} 张...",
+    "SVG_CONVERTING": "正在转换 SVG 图片：{0}",
+    "SVG_CONVERT_FAILED": "SVG 转换失败：{0}，将嵌入原始文件。"
   },
   'zh-tw': {
     "PLUGIN_NAME": "DOCX 匯出器",
@@ -116,7 +127,9 @@ const locales = {
     "INVALID_FILE_PATH": "無效的文件路徑。請輸入一個有效的路徑。",
     "FILE_SAVE_LOCATION_NOTICE": "已將 DOCX 文件匯出到和筆記文件相同的資料夾內。",
     "EXPORTING_START": "開始匯出 DOCX...",
-    "DOWNLOADING_IMAGE": "正在下載第 {0} 張圖片，共 {1} 張..."
+    "DOWNLOADING_IMAGE": "正在下載第 {0} 張圖片，共 {1} 張...",
+    "SVG_CONVERTING": "正在轉換 SVG 圖片：{0}",
+    "SVG_CONVERT_FAILED": "SVG 轉換失敗：{0}，將嵌入原始檔案。"
   },
   ja: {
     "PLUGIN_NAME": "DOCXエクスポート",
@@ -145,7 +158,9 @@ const locales = {
     "INVALID_FILE_PATH": "無効なファイルパスです。有効なパスを入力してください。",
     "FILE_SAVE_LOCATION_NOTICE": "DOCXファイルはノートと同じフォルダにエクスポートされました。",
     "EXPORTING_START": "DOCXのエクスポートを開始しています...",
-    "DOWNLOADING_IMAGE": "画像 {0}/{1} をダウンロード中..."
+    "DOWNLOADING_IMAGE": "画像 {0}/{1} をダウンロード中...",
+    "SVG_CONVERTING": "SVG画像を変換中: {0}",
+    "SVG_CONVERT_FAILED": "SVGの変換に失敗しました: {0}。元のファイルを埋め込みます。"
   },
   ko: {
     "PLUGIN_NAME": "DOCX 내보내기",
@@ -174,7 +189,9 @@ const locales = {
     "INVALID_FILE_PATH": "잘못된 파일 경로입니다. 유효한 경로를 입력하십시오。",
     "FILE_SAVE_LOCATION_NOTICE": "DOCX 파일은 노트와 동일한 폴더에 내보내졌습니다。",
     "EXPORTING_START": "DOCX 내보내기를 시작하는 중...",
-    "DOWNLOADING_IMAGE": "이미지 다운로드 중 ({0}/{1})..."
+    "DOWNLOADING_IMAGE": "이미지 다운로드 중 ({0}/{1})...",
+    "SVG_CONVERTING": "SVG 이미지 변환 중: {0}",
+    "SVG_CONVERT_FAILED": "SVG 변환 실패: {0}, 원본 파일을 삽입합니다."
   },
   fr: {
     "PLUGIN_NAME": "Exportateur DOCX",
@@ -203,7 +220,9 @@ const locales = {
     "INVALID_FILE_PATH": "Chemin de fichier invalide. Veuillez entrer un chemin valide.",
     "FILE_SAVE_LOCATION_NOTICE": "Le fichier DOCX a été exporté dans le même dossier que le fichier de note.",
     "EXPORTING_START": "Démarrage de l'exportation DOCX...",
-    "DOWNLOADING_IMAGE": "Téléchargement de l'image {0} sur {1}..."
+    "DOWNLOADING_IMAGE": "Téléchargement de l'image {0} sur {1}...",
+    "SVG_CONVERTING": "Conversion de l'image SVG : {0}",
+    "SVG_CONVERT_FAILED": "Échec de la conversion SVG pour : {0}, le fichier d'origine sera intégré."
   },
   es: {
     "PLUGIN_NAME": "Exportador DOCX",
@@ -232,7 +251,9 @@ const locales = {
     "INVALID_FILE_PATH": "Ruta de archivo inválida. Por favor, introduzca una ruta válida.",
     "FILE_SAVE_LOCATION_NOTICE": "El archivo DOCX ha sido exportado a la misma carpeta que el archivo de notas.",
     "EXPORTING_START": "Iniciando exportación a DOCX...",
-    "DOWNLOADING_IMAGE": "Descargando imagen {0} de {1}..."
+    "DOWNLOADING_IMAGE": "Descargando imagen {0} de {1}...",
+    "SVG_CONVERTING": "Convirtiendo imagen SVG: {0}",
+    "SVG_CONVERT_FAILED": "Error al convertir SVG: {0}, se insertará el archivo original."
   },
   ru: {
     "PLUGIN_NAME": "Экспортер DOCX",
@@ -261,7 +282,9 @@ const locales = {
     "INVALID_FILE_PATH": "Неверный путь к файлу. Пожалуйста, введите корректный путь.",
     "FILE_SAVE_LOCATION_NOTICE": "Файл DOCX был экспортирован в ту же папку, что и файл заметки.",
     "EXPORTING_START": "Начало экспорта в DOCX...",
-    "DOWNLOADING_IMAGE": "Загрузка изображения {0} из {1}..."
+    "DOWNLOADING_IMAGE": "Загрузка изображения {0} из {1}...",
+    "SVG_CONVERTING": "Конвертация SVG-изображения: {0}",
+    "SVG_CONVERT_FAILED": "Не удалось конвертировать SVG: {0}, будет вставлен исходный файл."
   },
   it: {
     "PLUGIN_NAME": "Esportatore DOCX",
@@ -290,7 +313,9 @@ const locales = {
     "INVALID_FILE_PATH": "Percorso file non valido. Inserisci un percorso valido.",
     "FILE_SAVE_LOCATION_NOTICE": "Il file DOCX è stato esportato nella stessa cartella del file di nota.",
     "EXPORTING_START": "Avvio esportazione DOCX...",
-    "DOWNLOADING_IMAGE": "Download immagine {0} di {1}..."
+    "DOWNLOADING_IMAGE": "Download immagine {0} di {1}...",
+    "SVG_CONVERTING": "Conversione immagine SVG: {0}",
+    "SVG_CONVERT_FAILED": "Conversione SVG non riuscita per: {0}, verrà incorporato il file originale."
   },
   pt: {
     "PLUGIN_NAME": "Exportador DOCX",
@@ -319,7 +344,9 @@ const locales = {
     "INVALID_FILE_PATH": "Caminho de arquivo inválido. Por favor, insira um caminho válido.",
     "FILE_SAVE_LOCATION_NOTICE": "O arquivo DOCX foi exportado para a mesma pasta do arquivo de nota.",
     "EXPORTING_START": "Iniciando exportação DOCX...",
-    "DOWNLOADING_IMAGE": "Baixando imagem {0} de {1}..."
+    "DOWNLOADING_IMAGE": "Baixando imagem {0} de {1}...",
+    "SVG_CONVERTING": "Convertendo imagem SVG: {0}",
+    "SVG_CONVERT_FAILED": "Falha ao converter SVG: {0}, incorporando o arquivo original."
   },
   tr: {
     "PLUGIN_NAME": "DOCX Dışa Aktarıcı",
@@ -348,7 +375,9 @@ const locales = {
     "INVALID_FILE_PATH": "Geçersiz dosya yolu. Lütfen geçerli bir yol girin.",
     "FILE_SAVE_LOCATION_NOTICE": "DOCX dosyası, not dosyasıyla aynı klasöre aktarıldı.",
     "EXPORTING_START": "DOCX dışa aktarma başlatılıyor...",
-    "DOWNLOADING_IMAGE": "Resim indiriliyor {0}/{1}..."
+    "DOWNLOADING_IMAGE": "Resim indiriliyor {0}/{1}...",
+    "SVG_CONVERTING": "SVG görseli dönüştürülüyor: {0}",
+    "SVG_CONVERT_FAILED": "SVG dönüştürme başarısız: {0}, orijinal dosya gömülüyor."
   },
   de: {
     "PLUGIN_NAME": "DOCX Exportierer",
@@ -377,7 +406,9 @@ const locales = {
     "INVALID_FILE_PATH": "Ungültiger Dateipfad. Bitte geben Sie einen gültigen Pfad ein.",
     "FILE_SAVE_LOCATION_NOTICE": "Die DOCX-Datei wurde im gleichen Ordner wie die Notizdatei exportiert.",
     "EXPORTING_START": "DOCX-Export wird gestartet...",
-    "DOWNLOADING_IMAGE": "Lade Bild {0} von {1}..."
+    "DOWNLOADING_IMAGE": "Lade Bild {0} von {1}...",
+    "SVG_CONVERTING": "SVG-Bild wird konvertiert: {0}",
+    "SVG_CONVERT_FAILED": "SVG-Konvertierung fehlgeschlagen für: {0}, Originaldatei wird eingebettet."
   },
   ar: {
     "PLUGIN_NAME": "مصدّر DOCX",
@@ -406,7 +437,9 @@ const locales = {
     "INVALID_FILE_PATH": "مسار ملف غير صالح. الرجاء إدخال مسار صالح.",
     "FILE_SAVE_LOCATION_NOTICE": "تم تصدير ملف DOCX إلى نفس مجلد ملف الملاحظة.",
     "EXPORTING_START": "جاري بدء تصدير DOCX...",
-    "DOWNLOADING_IMAGE": "جاري تحميل الصورة {0} من {1}..."
+    "DOWNLOADING_IMAGE": "جاري تحميل الصورة {0} من {1}...",
+    "SVG_CONVERTING": "جاري تحويل صورة SVG: {0}",
+    "SVG_CONVERT_FAILED": "فشل تحويل SVG لـ: {0}، سيتم تضمين الملف الأصلي."
   }
 };
 
@@ -470,6 +503,20 @@ export default class DocxExporterPlugin extends Plugin {
 
   private totalNetworkImages = 0;
   private currentImageIndex = 0;
+
+  private nodeModuleCache = new Map<string, any>();
+  private rsvgConverterPath: string | null | undefined = undefined;
+  private svgPngCache = new Map<string, ArrayBuffer>();
+
+  // 标题 -> Word 书签名（用于目录跳转），以及按顺序记录的标题层级信息
+  private headingBookmarks = new Map<string, string>();
+  private headingBookmarksLoose = new Map<string, string>();
+  // 同名标题可能出现多次：每个标题实例都要有唯一书签名，链接指向第一次出现的位置
+  private headingBookmarksByKey = new Map<string, string[]>();
+  private headingRenderCursor = new Map<string, number>();
+  private headingEntries: { level: number, text: string, bookmark: string }[] = [];
+  // 原始 Markdown 中 ```table-of-contents 代码块的选项（按出现顺序）
+  private tocOptionQueue: string[] = [];
 
   async onload() {
     this.i18n = new I18N(this.app);
@@ -557,6 +604,495 @@ export default class DocxExporterPlugin extends Plugin {
     return null;
   }
 
+  // --- 目录（table-of-contents）与标题书签 ---
+
+  // 标题文本与目录链接目标都用它规范化，保证两边能对上
+  private normalizeAnchorText(text: string): string {
+    let value = (text ?? '').replace(/\s+/g, ' ').trim();
+    // 去掉 Markdown 强调/代码标记（metadataCache 里的标题可能仍带有这些符号）
+    value = value.replace(/[*_`~=]/g, '');
+    // 目录插件会把 # 与 | 替换成空格，这里保持一致
+    value = value.replace(/[#|]/g, ' ');
+    return value.replace(/\s+/g, ' ').trim().toLowerCase();
+  }
+
+  // 宽松匹配：只保留字母、数字和 CJK，忽略标点与空格差异
+  private looseAnchorKey(text: string): string {
+    return this.normalizeAnchorText(text).replace(/[^0-9a-z一-鿿]+/g, '');
+  }
+
+  // 导出前先扫描所有标题，为它们分配书签（目录通常出现在标题之前，必须提前知道锚点）
+  private collectHeadingBookmarks(root: HTMLElement): void {
+    this.headingBookmarks.clear();
+    this.headingBookmarksLoose.clear();
+    this.headingBookmarksByKey.clear();
+    this.headingRenderCursor.clear();
+    this.headingEntries = [];
+
+    const headings = Array.from(root.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+    let counter = 0;
+    for (const heading of headings) {
+      const element = heading as HTMLElement;
+      const text = (element.textContent ?? '').trim();
+      const level = Number(element.tagName.substring(1)) || 1;
+      if (!text) continue;
+      const key = this.normalizeAnchorText(text);
+      if (!key) continue;
+
+      counter++;
+      // Word 书签名只能由字母、数字、下划线组成，且以字母开头
+      const bookmark = `toc_heading_${counter}`;
+      this.headingEntries.push({ level, text, bookmark });
+
+      const list = this.headingBookmarksByKey.get(key) ?? [];
+      list.push(bookmark);
+      this.headingBookmarksByKey.set(key, list);
+      if (!this.headingBookmarks.has(key)) this.headingBookmarks.set(key, bookmark);
+      const looseKey = this.looseAnchorKey(text);
+      if (looseKey && !this.headingBookmarksLoose.has(looseKey)) {
+        this.headingBookmarksLoose.set(looseKey, bookmark);
+      }
+    }
+  }
+
+  private getHeadingBookmark(text: string): string | null {
+    const key = this.normalizeAnchorText(text);
+    if (!key) return null;
+    return this.headingBookmarks.get(key) ?? null;
+  }
+
+  // 渲染标题时按顺序取用书签名，保证同名标题的书签名也不重复
+  private takeHeadingBookmarkForRender(text: string): string | null {
+    const key = this.normalizeAnchorText(text);
+    if (!key) return null;
+    const list = this.headingBookmarksByKey.get(key);
+    if (!list || list.length === 0) return null;
+    const index = this.headingRenderCursor.get(key) ?? 0;
+    this.headingRenderCursor.set(key, index + 1);
+    return list[Math.min(index, list.length - 1)];
+  }
+
+  // 把 [[#标题]] 这类站内链接解析成书签名
+  private resolveHeadingAnchor(rawTarget: string): string | null {
+    if (!rawTarget) return null;
+    let target = rawTarget.trim();
+    if (!target.startsWith('#')) return null;
+    target = target.substring(1);
+    try { target = decodeURIComponent(target); } catch (error) { }
+
+    // data-href / href 可能形如 "#标题" 或 "#标题|显示文本"
+    const candidates = [target, target.split('|')[0], target.replace(/\|/g, ' ')];
+    for (const candidate of candidates) {
+      const bookmark = this.getHeadingBookmark(candidate);
+      if (bookmark) return bookmark;
+    }
+    const looseKey = this.looseAnchorKey(target);
+    return looseKey ? this.headingBookmarksLoose.get(looseKey) ?? null : null;
+  }
+
+  // 目录条目文本样式
+  private tocLinkTextRun(text: string): TextRun {
+    return new TextRun({ text, style: "Hyperlink", color: '0563C1', underline: {} });
+  }
+
+  // ```table-of-contents / ```toc 代码块（可能是 pre>code，也可能是已渲染的容器）
+  private isTocCodeBlock(el: HTMLElement): boolean {
+    const classesOf = (node: HTMLElement) => Array.from(node.classList).map(cls => cls.toLowerCase());
+    const classes = classesOf(el);
+    const codeEl = el.tagName?.toUpperCase() === 'CODE' ? el : el.querySelector('code');
+    const codeClasses = codeEl ? classesOf(codeEl as HTMLElement) : [];
+    return [...classes, ...codeClasses].some(cls => cls === 'language-table-of-contents' || cls === 'language-toc');
+  }
+
+  // 分页标记：<div class="page-break" style="page-break-before: always;"></div>
+  private isPageBreakElement(el: HTMLElement): boolean {
+    if (el.classList?.contains('page-break')) return true;
+    const styleAttr = (el.getAttribute('style') || '').toLowerCase().replace(/\s+/g, '');
+    return /page-break-before:always/.test(styleAttr)
+      || /break-before:page/.test(styleAttr)
+      || /page-break-after:always/.test(styleAttr);
+  }
+
+  // 目录占位元素：可能带 block-language-* 类名，也可能仍是未展开的代码块
+  private isTocPlaceholder(el: HTMLElement): boolean {
+    if (this.isTocCodeBlock(el)) return true;
+    const classes = Array.from(el.classList).map(cls => cls.toLowerCase());
+    if (classes.some(cls => cls === 'block-language-table-of-contents' || cls === 'block-language-toc')) return true;
+    try {
+      if (el.querySelector(':scope > .block-language-table-of-contents, :scope > .block-language-toc')) return true;
+    } catch (error) { }
+    return false;
+  }
+
+  // 从原始 Markdown 中按顺序取出 ```table-of-contents / ```toc 代码块的内容（含选项）
+  private parseTocBlocksFromMarkdown(markdown: string): string[] {
+    const blocks: string[] = [];
+    let inBlock = false;
+    let buffer: string[] = [];
+    for (const rawLine of (markdown ?? '').split('\n')) {
+      const line = rawLine.trim();
+      if (!inBlock) {
+        if (/^`{3,}\s*(table-of-contents|toc)\s*$/i.test(line)) {
+          inBlock = true;
+          buffer = [];
+        }
+      } else if (/^`{3,}\s*$/.test(line)) {
+        inBlock = false;
+        blocks.push(buffer.join('\n'));
+      } else {
+        buffer.push(rawLine);
+      }
+    }
+    return blocks;
+  }
+
+  // 依次取用 Markdown 里解析到的目录选项，取不到就用传入的文本兜底
+  private takeTocOptions(fallback: string): string {
+    return this.tocOptionQueue.length > 0 ? this.tocOptionQueue.shift() as string : fallback;
+  }
+
+  // 目录代码块所在的容器（Automatic Table Of Contents 插件会生成这类容器）
+  private isInsideTocBlock(el: HTMLElement): boolean {
+    try {
+      return !!el.closest('.block-language-table-of-contents, .block-language-toc');
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // 判断列表是否为目录：容器带 TOC 类名，或条目全部是指向本文档标题的链接
+  private isTocList(listEl: HTMLElement): boolean {
+    if (this.isInsideTocBlock(listEl)) return true;
+    const items = Array.from(listEl.querySelectorAll(':scope > li'));
+    if (items.length < 2) return false;
+    let anchorCount = 0;
+    for (const item of items) {
+      const link = item.querySelector('a[href^="#"], a[data-href^="#"]');
+      if (link && this.resolveHeadingAnchor(link.getAttribute('data-href') || link.getAttribute('href') || '')) {
+        anchorCount++;
+      }
+    }
+    return anchorCount >= 2 && anchorCount === items.length;
+  }
+
+  // 目录列表渲染为带缩进的段落（不带项目符号，更接近 Word 目录的观感）
+  private async parseTocListElement(
+    listEl: HTMLUListElement | HTMLOListElement,
+    level: number,
+    sourcePath: string
+  ): Promise<Paragraph[]> {
+    const paragraphs: Paragraph[] = [];
+    for (const li of Array.from(listEl.children).filter(c => c.tagName === 'LI')) {
+      const liElement = li as HTMLLIElement;
+      const contentContainer = document.createElement('div');
+      let nestedList: HTMLUListElement | HTMLOListElement | null = null;
+      for (const child of Array.from(liElement.childNodes)) {
+        if (child.nodeType === Node.ELEMENT_NODE && (child.nodeName === 'UL' || child.nodeName === 'OL')) {
+          nestedList = child as HTMLUListElement | HTMLOListElement;
+        } else {
+          contentContainer.appendChild(child.cloneNode(true));
+        }
+      }
+      const children = await this.parseInlineElements(contentContainer, sourcePath);
+      if (children.length > 0) {
+        paragraphs.push(new Paragraph({
+          children,
+          indent: { left: 360 * level },
+          spacing: { after: 60 },
+          font: { name: 'Times New Roman' }
+        }));
+      }
+      if (nestedList) {
+        paragraphs.push(...await this.parseTocListElement(nestedList, level + 1, sourcePath));
+      }
+    }
+    return paragraphs;
+  }
+
+  // 解析 table-of-contents 代码块里的选项（style / minLevel / maxLevel / title 等）
+  private parseTocOptions(source: string): { title: string, style: string, minLevel: number, maxLevel: number } {
+    const options = { title: '', style: 'nestedList', minLevel: 0, maxLevel: 0 };
+    for (const rawLine of (source ?? '').split('\n')) {
+      const line = rawLine.trim();
+      if (!line || line.startsWith('#')) continue;
+      const match = line.match(/^([a-zA-Z]+)\s*:\s*(.*)$/);
+      if (!match) continue;
+      const name = match[1].toLowerCase();
+      // 去掉行尾注释
+      let value = match[2].split('#')[0].trim();
+      if (name === 'title') {
+        options.title = (value === 'null' || value === '""' || value === "''") ? '' : value;
+      } else if (name === 'style') {
+        options.style = value || 'nestedList';
+      } else if (name === 'minlevel' || name === 'maxlevel') {
+        const parsed = Number.parseInt(value, 10);
+        if (!isNaN(parsed) && parsed >= 0) {
+          if (name === 'minlevel') options.minLevel = parsed; else options.maxLevel = parsed;
+        }
+      }
+    }
+    return options;
+  }
+
+  // 目录插件未启用时，由本插件根据标题生成目录（条目同样是可点击的内部链接）
+  private buildTableOfContents(source: string): Paragraph[] {
+    if (this.headingEntries.length === 0) return [];
+    const options = this.parseTocOptions(source);
+    const entries = this.headingEntries.filter(entry =>
+      (!options.minLevel || entry.level >= options.minLevel) &&
+      (!options.maxLevel || entry.level <= options.maxLevel)
+    );
+    if (entries.length === 0) return [];
+
+    const baseLevel = options.minLevel > 0
+      ? options.minLevel
+      : Math.min(...entries.map(entry => entry.level));
+    const mainFont = { name: 'Times New Roman' };
+    const paragraphs: Paragraph[] = [];
+
+    if (options.title) {
+      paragraphs.push(new Paragraph({
+        children: [new TextRun({ text: options.title, bold: true, font: mainFont })],
+        spacing: { after: 100 },
+        font: mainFont
+      }));
+    }
+
+    if (options.style === 'inlineFirstLevel') {
+      const children: InlineRun[] = [];
+      entries.filter(entry => entry.level === baseLevel).forEach((entry, index) => {
+        if (index > 0) children.push(new TextRun({ text: ' | ', font: mainFont }));
+        children.push(new InternalHyperlink({
+          anchor: entry.bookmark,
+          children: [this.tocLinkTextRun(entry.text)]
+        }));
+      });
+      paragraphs.push(new Paragraph({ children, spacing: { after: 200 }, font: mainFont }));
+      return paragraphs;
+    }
+
+    for (const entry of entries) {
+      const indentLevel = Math.max(0, entry.level - baseLevel);
+      paragraphs.push(new Paragraph({
+        children: [new InternalHyperlink({
+          anchor: entry.bookmark,
+          children: [this.tocLinkTextRun(entry.text)]
+        })],
+        indent: { left: 360 * indentLevel },
+        spacing: { after: 60 },
+        font: mainFont
+      }));
+    }
+    return paragraphs;
+  }
+
+  // --- SVG 转 PNG（调用随插件附带的 rsvg-convert）---
+
+  // 懒加载 Node 模块，移动端不可用
+  private requireNodeModule<T = any>(id: string): T | null {
+    if (this.nodeModuleCache.has(id)) {
+      return (this.nodeModuleCache.get(id) as T) ?? null;
+    }
+    let mod: any = null;
+    try {
+      const req: any = (window as any).require
+        ?? (globalThis as any).require
+        ?? (typeof require === 'function' ? require : null);
+      if (req) mod = req(id);
+    } catch (error) {
+      mod = null;
+    }
+    this.nodeModuleCache.set(id, mod);
+    return mod as T | null;
+  }
+
+  // 定位插件目录下的 rsvg-convert 可执行文件
+  private resolveRsvgConverterPath(): string | null {
+    if (this.rsvgConverterPath !== undefined) return this.rsvgConverterPath;
+    let resolved: string | null = null;
+    try {
+      const pathMod = this.requireNodeModule<any>('path');
+      const fsMod = this.requireNodeModule<any>('fs');
+      const adapter: any = (this.app.vault as any).adapter;
+      const basePath: string = typeof adapter?.getBasePath === 'function' ? adapter.getBasePath() : '';
+      if (pathMod && fsMod && basePath) {
+        const hasProcess = typeof process !== 'undefined';
+        const isWindows = hasProcess && process.platform === 'win32';
+        const fileNames = isWindows ? ['rsvg-convert.exe', 'rsvg-convert'] : ['rsvg-convert', 'rsvg-convert.exe'];
+        // 优先使用插件自带的二进制，其次回退到系统 PATH 中安装的 rsvg-convert
+        const pathEnv: string = hasProcess ? (process.env?.PATH ?? '') : '';
+        const dirs = [
+          this.manifest.dir,
+          `.obsidian/plugins/${this.manifest.id}`,
+          ...pathEnv.split(pathMod.delimiter).filter(Boolean)
+        ];
+        for (const dir of dirs) {
+          if (!dir) continue;
+          for (const fileName of fileNames) {
+            const candidate = pathMod.join(basePath, dir, fileName);
+            try {
+              if (fsMod.existsSync(candidate)) { resolved = candidate; break; }
+            } catch (error) { }
+          }
+          if (resolved) break;
+        }
+      }
+    } catch (error) {
+      resolved = null;
+    }
+    this.rsvgConverterPath = resolved;
+    return resolved;
+  }
+
+  // 判断图片数据是否为 SVG
+  private looksLikeSvg(buffer: ArrayBuffer, extension: string | null): boolean {
+    if (extension && extension.toLowerCase().replace(/^\./, '') === 'svg') return true;
+    try {
+      const head = new Uint8Array(buffer.slice(0, 512));
+      return new TextDecoder().decode(head).includes('<svg');
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // 从 width/height/viewBox 解析 SVG 固有尺寸
+  private getSvgIntrinsicSize(svgText: string): { width: number, height: number } | null {
+    const header = svgText.slice(0, 4096);
+    const readLength = (name: string): { value: number, unit: string } | null => {
+      const match = header.match(new RegExp(`\\s${name}\\s*=\\s*["']([^"']+)["']`, 'i'));
+      if (!match) return null;
+      const value = parseFloat(match[1]);
+      if (isNaN(value) || value <= 0) return null;
+      const unit = (match[1].match(/[a-z%]+/i)?.[0] || 'px').toLowerCase();
+      return { value, unit };
+    };
+    const width = readLength('width');
+    const height = readLength('height');
+    if (width && height && width.unit !== '%' && height.unit !== '%') {
+      return {
+        width: this.svgLengthToPx(width.value, width.unit),
+        height: this.svgLengthToPx(height.value, height.unit)
+      };
+    }
+    const viewBox = header.match(/viewBox\s*=\s*["']([^"']+)["']/i);
+    if (viewBox) {
+      const parts = viewBox[1].trim().split(/[\s,]+/).map(Number);
+      if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+        return { width: parts[2], height: parts[3] };
+      }
+    }
+    return null;
+  }
+
+  // SVG 长度单位转 px
+  private svgLengthToPx(value: number, unit: string): number {
+    switch (unit) {
+      case 'pt': return value * 96 / 72;
+      case 'pc': return value * 16;
+      case 'in': return value * 96;
+      case 'cm': return value * 96 / 2.54;
+      case 'mm': return value * 96 / 25.4;
+      case 'em': case 'ex': case 'rem': return value * 16;
+      default: return value;
+    }
+  }
+
+  // 计算 SVG 在文档中应显示的尺寸
+  private resolveSvgDisplaySize(
+    imgEl: HTMLImageElement,
+    intrinsic: { width: number, height: number } | null
+  ): { width: number, height: number } {
+    const styleWidth = parseFloat(imgEl.style.width) || imgEl.width || 0;
+    const styleHeight = parseFloat(imgEl.style.height) || imgEl.height || 0;
+    const naturalWidth = imgEl.naturalWidth > 0 ? imgEl.naturalWidth : 0;
+    const naturalHeight = imgEl.naturalHeight > 0 ? imgEl.naturalHeight : 0;
+
+    let width = styleWidth || intrinsic?.width || naturalWidth || 0;
+    let height = styleHeight || intrinsic?.height || naturalHeight || 0;
+
+    if (width > 0 && height <= 0) {
+      const ratio = intrinsic
+        ? intrinsic.height / intrinsic.width
+        : (naturalWidth && naturalHeight ? naturalHeight / naturalWidth : 0.75);
+      height = width * ratio;
+    } else if (height > 0 && width <= 0) {
+      const ratio = intrinsic
+        ? intrinsic.width / intrinsic.height
+        : (naturalWidth && naturalHeight ? naturalWidth / naturalHeight : 4 / 3);
+      width = height * ratio;
+    }
+
+    if (width <= 0 || height <= 0) { width = 550; height = 300; }
+    return { width: Math.round(width), height: Math.round(height) };
+  }
+
+  private hashText(text: string): string {
+    let hash = 5381;
+    for (let i = 0; i < text.length; i++) {
+      hash = ((hash << 5) + hash + text.charCodeAt(i)) >>> 0;
+    }
+    return hash.toString(36);
+  }
+
+  // 调用 rsvg-convert 将 SVG 渲染为 PNG（按显示宽度的 2 倍渲染以保证清晰度）
+  private async convertSvgToPng(svgText: string, displayWidth: number): Promise<ArrayBuffer | null> {
+    const cacheKey = `${this.hashText(svgText)}-${displayWidth}`;
+    const cached = this.svgPngCache.get(cacheKey);
+    if (cached) return cached;
+
+    const fsMod = this.requireNodeModule<any>('fs');
+    const osMod = this.requireNodeModule<any>('os');
+    const pathMod = this.requireNodeModule<any>('path');
+    const childProcessMod = this.requireNodeModule<any>('child_process');
+    const converterPath = this.resolveRsvgConverterPath();
+    if (!fsMod || !osMod || !pathMod || !childProcessMod?.execFile || !converterPath) return null;
+
+    const tmpDir = osMod.tmpdir();
+    const uniqueId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+    const svgFilePath = pathMod.join(tmpDir, `obsidian-docx-${uniqueId}.svg`);
+    const pngFilePath = pathMod.join(tmpDir, `obsidian-docx-${uniqueId}.png`);
+    const renderWidth = Math.max(32, Math.min(3000, Math.round(displayWidth * 2)));
+
+    const cleanup = () => {
+      try { if (fsMod.existsSync(svgFilePath)) fsMod.unlinkSync(svgFilePath); } catch (error) { }
+      try { if (fsMod.existsSync(pngFilePath)) fsMod.unlinkSync(pngFilePath); } catch (error) { }
+    };
+
+    try {
+      await fsMod.promises.writeFile(svgFilePath, new TextEncoder().encode(svgText));
+      const argSets: string[][] = [
+        ['-f', 'png', '-a', '-b', 'white', '-w', String(renderWidth), '-o', pngFilePath, svgFilePath],
+        ['-f', 'png', '-a', '-w', String(renderWidth), '-o', pngFilePath, svgFilePath]
+      ];
+      let lastError: any = null;
+      for (const args of argSets) {
+        lastError = await new Promise<any>(resolve => {
+          childProcessMod.execFile(
+            converterPath,
+            args,
+            { windowsHide: true, timeout: 30000, cwd: tmpDir },
+            (error: any) => resolve(error ?? null)
+          );
+        });
+        if (!lastError) break;
+      }
+      if (lastError) {
+        cleanup();
+        return null;
+      }
+
+      const data: Uint8Array = await fsMod.promises.readFile(pngFilePath);
+      const result = new Uint8Array(data.length);
+      result.set(data);
+      this.svgPngCache.set(cacheKey, result.buffer);
+      cleanup();
+      return result.buffer;
+    } catch (error) {
+      cleanup();
+      return null;
+    }
+  }
+
   // 转义正则
   private escapeRegExp(s: string): string {
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -581,6 +1117,78 @@ export default class DocxExporterPlugin extends Plugin {
       }
     });
     return runs;
+  }
+
+  // docx 默认页面（A4 11906 twips + 左右各 1 英寸页边距 1440）下正文可用宽度
+  private readonly pageContentTwips = 9026;
+  private readonly pageContentWidthPx = 602;
+  // 单元格左右内边距：各 100 twips
+  private readonly cellMarginPx = 2 * (100 / 20) * (96 / 72);
+
+  // 表格列数（考虑 colspan，取各行的最大值）
+  private countTableColumns(tableEl: HTMLElement): number {
+    let max = 0;
+    for (const row of Array.from(tableEl.querySelectorAll('tr'))) {
+      let count = 0;
+      for (const cell of Array.from(row.children)) {
+        const tag = (cell as HTMLElement).tagName?.toUpperCase();
+        if (tag !== 'TD' && tag !== 'TH') continue;
+        count += Number(cell.getAttribute('colspan') || '1') || 1;
+      }
+      max = Math.max(max, count);
+    }
+    return max;
+  }
+
+  // 各列宽度占比：优先用渲染后的真实宽度（取第一行），量不到时按列数均分
+  private computeColumnFractions(tableEl: HTMLElement, columns: number): number[] {
+    const count = Math.max(1, columns);
+    const widths: number[] = new Array(count).fill(0);
+    let measured = false;
+    for (const row of Array.from(tableEl.querySelectorAll('tr'))) {
+      const cells = Array.from(row.children).filter(c => ['TD', 'TH'].includes((c as HTMLElement).tagName));
+      cells.forEach((cell, index) => {
+        if (index >= count) return;
+        const width = (cell as HTMLElement).getBoundingClientRect().width;
+        if (width > 0) { measured = true; widths[index] = Math.max(widths[index], width); }
+      });
+      if (measured) break;
+    }
+    if (!measured) return new Array(count).fill(1 / count);
+    const total = widths.reduce((sum, w) => sum + w, 0);
+    if (total <= 0) return new Array(count).fill(1 / count);
+    return widths.map(w => w / total);
+  }
+
+  // 图片位于表格单元格时，返回该单元格可容纳的宽度（px），否则返回 null
+  // 与 parseTableElement 里设置的列宽使用同一套列宽占比，保证图片不会把单元格撑开
+  private getTableCellAvailableWidth(imgEl: HTMLElement): number | null {
+    let cell: HTMLElement | null = null;
+    try { cell = imgEl.closest('td, th') as HTMLElement | null; } catch (error) { return null; }
+    if (!cell) return null;
+    const table = cell.closest('table') as HTMLElement | null;
+    if (!table) return null;
+
+    const columns = this.countTableColumns(table);
+    const fractions = this.computeColumnFractions(table, columns);
+    const row = cell.parentElement as HTMLElement | null;
+    let index = 0;
+    if (row) {
+      const siblings = Array.from(row.children).filter(c => ['TD', 'TH'].includes((c as HTMLElement).tagName));
+      const found = siblings.indexOf(cell);
+      if (found >= 0) index = found;
+    }
+    const fraction = fractions[index] ?? (1 / Math.max(1, columns));
+    // 扣掉单元格左右边距与边框，再留一点余量
+    const available = this.pageContentWidthPx * fraction - this.cellMarginPx - 6;
+    return Math.max(40, Math.round(available));
+  }
+
+  // 按最大宽度等比缩放
+  private clampImageSize(size: { width: number, height: number }, maxWidth: number): { width: number, height: number } {
+    if (!size.width || size.width <= maxWidth) return size;
+    const height = Math.max(1, Math.round((maxWidth / size.width) * size.height));
+    return { width: Math.round(maxWidth), height };
   }
 
   // 解析列表（支持多级缩进和有序/无序）
@@ -632,14 +1240,23 @@ export default class DocxExporterPlugin extends Plugin {
   private async parseTableElement(tableEl: HTMLElement, bodyBgColor: string, sourcePath: string): Promise<Table> {
     const rows: TableRow[] = [];
     let isFirstRow = true;  // 标记是否为表头行
+    const columnCount = this.countTableColumns(tableEl);
+    const columnFractions = this.computeColumnFractions(tableEl, columnCount);
 
     // 遍历表格行
     for (const row of Array.from(tableEl.querySelectorAll('tr'))) {
       const cells: TableCell[] = [];
+      let cellIndex = 0;
 
       // 遍历单元格
       for (const cell of Array.from(row.querySelectorAll('th, td'))) {
         const cellStyle = window.getComputedStyle(cell);
+        // 用 dxa（缇）指定列宽：docx 的百分比宽度会写成非法的 w:w="100%"，Word 只能退回自动调整
+        const columnTwips = Math.max(
+          1,
+          Math.round(this.pageContentTwips * (columnFractions[cellIndex] ?? (1 / Math.max(1, columnCount))))
+        );
+        cellIndex++;
         const isHeader = cell.tagName.toUpperCase() === 'TH' || isFirstRow;
 
         // 处理单元格内容
@@ -654,6 +1271,7 @@ export default class DocxExporterPlugin extends Plugin {
         // 为表头单元格添加特殊样式
         cells.push(new TableCell({
           children: [paragraph],
+          width: { size: columnTwips, type: WidthType.DXA },
           margins: {
             top: 100,
             bottom: 100,
@@ -682,7 +1300,8 @@ export default class DocxExporterPlugin extends Plugin {
     // 创建表格，添加边框样式
     return new Table({
       rows,
-      width: { size: 100, type: WidthType.PERCENTAGE },
+      width: { size: this.pageContentTwips, type: WidthType.DXA },
+      layout: TableLayoutType.FIXED,
       margins: { top: 100, bottom: 100 },
       borders: {
         top: { style: BorderStyle.SINGLE, size: 1, color: "auto" },
@@ -706,8 +1325,8 @@ export default class DocxExporterPlugin extends Plugin {
   }
 
   // 解析行内元素（支持超链接、加粗、斜体、代码、图片等）
-  private async parseInlineElements(element: HTMLElement, sourcePath: string): Promise<(TextRun | ExternalHyperlink | ImageRun)[]> {
-    const runs: (TextRun | ExternalHyperlink | ImageRun)[] = [];
+  private async parseInlineElements(element: HTMLElement, sourcePath: string): Promise<InlineRun[]> {
+    const runs: InlineRun[] = [];
     const mainFont = { name: 'Times New Roman' };
     const codeFont = { name: 'Courier New' };
     for (const child of Array.from(element.childNodes)) {
@@ -741,7 +1360,18 @@ export default class DocxExporterPlugin extends Plugin {
         const runOptions: any = { text: el.textContent?.trim() || '', color: this.rgbToHex(style.color), size: this.pxToHalfPoints(style.fontSize), font: mainFont };
         switch (el.tagName.toUpperCase()) {
           case 'A':
-            runs.push(new ExternalHyperlink({ link: el.getAttribute('href') || '', children: [new TextRun({ text: el.textContent?.trim() || '', style: "Hyperlink", color: this.rgbToHex(style.color) || '0563C1', underline: {} })] }));
+            const linkText = el.textContent?.trim() || '';
+            const linkChildren: InlineRun[] = [new TextRun({ text: linkText, style: "Hyperlink", color: this.rgbToHex(style.color) || '0563C1', underline: {} })];
+            const anchor = this.resolveHeadingAnchor(el.getAttribute('data-href') || el.getAttribute('href') || '');
+            if (anchor) {
+              // 指向本文档标题（目录条目）：用书签实现可点击跳转
+              runs.push(new InternalHyperlink({ anchor, children: linkChildren }));
+            } else if ((el.getAttribute('href') || '').startsWith('#')) {
+              // 站内锚点但没匹配到标题，退化为普通文本，避免生成无效链接
+              runs.push(new TextRun({ text: linkText, color: this.rgbToHex(style.color) || '0563C1', underline: {} }));
+            } else {
+              runs.push(new ExternalHyperlink({ link: el.getAttribute('href') || '', children: linkChildren }));
+            }
             break;
           case 'DEL': runOptions.strike = true; runs.push(new TextRun(runOptions)); break;
           case 'STRONG':
@@ -774,8 +1404,67 @@ export default class DocxExporterPlugin extends Plugin {
     return runs;
   }
 
+  // vault 在磁盘上的根路径（仅桌面端可用）
+  private getVaultBasePath(): string {
+    try {
+      const adapter: any = (this.app.vault as any).adapter;
+      return typeof adapter?.getBasePath === 'function' ? adapter.getBasePath() : '';
+    } catch (error) {
+      return '';
+    }
+  }
+
+  // 按库内路径 / 链接名查找文件
+  private findVaultFile(linkPath: string, sourcePath: string): TFile | null {
+    if (!linkPath) return null;
+    const normalized = linkPath.replace(/\\/g, '/').replace(/^\/+/, '');
+    const abstract = this.app.vault.getAbstractFileByPath(normalized);
+    if (abstract instanceof TFile) return abstract;
+    const dest = this.app.metadataCache.getFirstLinkpathDest(normalized, sourcePath);
+    if (dest instanceof TFile) return dest;
+    // 兜底：忽略大小写再匹配一次完整路径
+    const lower = normalized.toLowerCase();
+    const matched = this.app.vault.getFiles().find(file => file.path.toLowerCase() === lower);
+    return matched ?? null;
+  }
+
+  // 从 img 的 src（app://local/...、capacitor://... 或库内相对路径）反查库内文件
+  // 标准 Markdown 语法 ![](path) 不会被包裹成 internal-embed，只能靠 src 解析
+  private resolveImageFileFromSrc(src: string, sourcePath: string): TFile | null {
+    const withoutScheme = src.replace(/^[a-z][a-z0-9+.-]*:\/\/[^/]*\/?/i, '');
+    const queryPath = src.match(/[?&]path=([^&]+)/i)?.[1];
+    const rawCandidates = [withoutScheme.split(/[?#]/)[0], queryPath].filter(Boolean) as string[];
+
+    const basePath = this.getVaultBasePath().replace(/\\/g, '/').replace(/\/+$/, '');
+    const candidates: string[] = [];
+    for (const rawCandidate of rawCandidates) {
+      let decoded = rawCandidate;
+      try { decoded = decodeURIComponent(rawCandidate); } catch (error) { }
+      decoded = decoded.replace(/\\/g, '/').replace(/^\/+/, '');
+      if (!decoded) continue;
+      if (basePath && decoded.toLowerCase().startsWith(`${basePath.toLowerCase()}/`)) {
+        candidates.push(decoded.substring(basePath.length + 1));
+      }
+      candidates.push(decoded);
+    }
+
+    for (const candidate of candidates) {
+      const file = this.findVaultFile(candidate, sourcePath);
+      if (file) return file;
+    }
+    // 绝对路径无法对应到库内时，退化为按文件名查找
+    for (const candidate of candidates) {
+      const fileName = candidate.split('/').pop();
+      if (fileName) {
+        const file = this.findVaultFile(fileName, sourcePath);
+        if (file) return file;
+      }
+    }
+    return null;
+  }
+
   private async createImageRun(imgEl: HTMLImageElement, sourcePath: string): Promise<ImageRun | null> {
-    const src = imgEl.getAttribute('src');
+    const src = imgEl.getAttribute('src') ?? '';
     const altText = imgEl.getAttribute('alt');
     let buffer: ArrayBuffer | null = null;
     let imageExtension: string | null = null;
@@ -797,24 +1486,33 @@ export default class DocxExporterPlugin extends Plugin {
         imageExtension = src.split('.').pop()?.toLowerCase() || 'jpeg';
       } else if (isLocalPath) {
         const parentSpan = imgEl.parentElement as HTMLElement;
-        const pathFromEmbed = parentSpan.getAttribute('alt') || parentSpan.getAttribute('data-href') || parentSpan.getAttribute('data-src');
-        if (!pathFromEmbed) {
-          new Notice(this.i18n.t("IMAGE_LINK_MISSING"));
-          return null;
-        }
-        pathForNotice = pathFromEmbed;
-        const file = this.app.metadataCache.getFirstLinkpathDest(pathFromEmbed, sourcePath);
+        const pathFromEmbed = parentSpan?.getAttribute('alt') || parentSpan?.getAttribute('data-href') || parentSpan?.getAttribute('data-src');
+        let imageFile: TFile | null = null;
 
-        if (!file || !(file instanceof TFile)) {
-          new Notice(this.i18n.t("LOCAL_IMAGE_NOT_FOUND", pathFromEmbed));
-          return null;
+        if (pathFromEmbed) {
+          pathForNotice = pathFromEmbed;
+          imageFile = this.findVaultFile(pathFromEmbed, sourcePath);
+          if (!imageFile) {
+            new Notice(this.i18n.t("LOCAL_IMAGE_NOT_FOUND", pathFromEmbed));
+            return null;
+          }
+        } else {
+          // 标准 Markdown 图片语法（如 ![](img.svg)、表格里的 ![](img.png)）没有 internal-embed 包裹，
+          // 只能从 src 反查库内文件
+          imageFile = this.resolveImageFileFromSrc(src, sourcePath);
+          if (!imageFile) {
+            console.error('[DOCX Exporter] Cannot resolve local image from src:', src);
+            new Notice(this.i18n.t("IMAGE_LINK_MISSING"));
+            return null;
+          }
+          pathForNotice = imageFile.path;
         }
 
         try {
-          buffer = await this.app.vault.readBinary(file);
-          imageExtension = file.extension;
+          buffer = await this.app.vault.readBinary(imageFile);
+          imageExtension = imageFile.extension;
         } catch (readError) {
-          new Notice(this.i18n.t("FILE_READ_FAILED", file.path));
+          new Notice(this.i18n.t("FILE_READ_FAILED", imageFile.path));
           return null;
         }
 
@@ -825,8 +1523,20 @@ export default class DocxExporterPlugin extends Plugin {
         const mimeType = src.match(/data:image\/(.*?);/)?.[1];
         imageExtension = mimeType || 'png';
       } else {
-        new Notice(this.i18n.t("UNSUPPORTED_IMAGE_FORMAT", src));
-        return null;
+        // 未带协议前缀的相对路径（部分渲染场景），先尝试按库内文件解析
+        const localFile = this.resolveImageFileFromSrc(src, sourcePath);
+        if (!localFile) {
+          new Notice(this.i18n.t("UNSUPPORTED_IMAGE_FORMAT", src));
+          return null;
+        }
+        pathForNotice = localFile.path;
+        try {
+          buffer = await this.app.vault.readBinary(localFile);
+          imageExtension = localFile.extension;
+        } catch (readError) {
+          new Notice(this.i18n.t("FILE_READ_FAILED", localFile.path));
+          return null;
+        }
       }
 
       if (!buffer || !imageExtension) {
@@ -834,35 +1544,73 @@ export default class DocxExporterPlugin extends Plugin {
         return null;
       }
 
-      let width = 550;
-      let height = 300;
-      const dimensionsFromBuffer = this.getImageDimensionsFromBuffer(buffer);
-      let naturalWidth = dimensionsFromBuffer?.width;
-      let naturalHeight = dimensionsFromBuffer?.height;
+      // 表格单元格里的图片必须收敛到单元格宽度内，否则 Word 中会显示不全
+      const maxImageWidth = this.getTableCellAvailableWidth(imgEl) ?? 550;
 
-      if (!naturalWidth || !naturalHeight) {
-        naturalWidth = imgEl.naturalWidth > 0 ? imgEl.naturalWidth : undefined;
-        naturalHeight = imgEl.naturalHeight > 0 ? imgEl.naturalHeight : undefined;
-      }
-
-      const styleWidth = parseFloat(imgEl.style.width) || imgEl.width;
-      const styleHeight = parseFloat(imgEl.style.height) || imgEl.height;
-
-      let finalWidth = styleWidth || naturalWidth;
-      let finalHeight = styleHeight || (finalWidth && naturalWidth ? (finalWidth / naturalWidth) * naturalHeight : undefined);
-
-      if (!finalWidth || !finalHeight || finalWidth <= 0 || finalHeight <= 0) {
-        finalWidth = width;
-        finalHeight = height;
-      } else {
-        finalWidth = Math.round(finalWidth);
-        finalHeight = Math.round(finalHeight);
-
-        if (finalWidth > width) {
-          finalHeight = Math.round((width / finalWidth) * finalHeight);
-          finalWidth = width;
+      // SVG 无法被 Word 稳定渲染，先用 rsvg-convert 栅格化为 PNG 再嵌入
+      let svgDisplaySize: { width: number, height: number } | null = null;
+      if (this.looksLikeSvg(buffer, imageExtension)) {
+        const svgText = new TextDecoder().decode(new Uint8Array(buffer));
+        svgDisplaySize = this.resolveSvgDisplaySize(imgEl, this.getSvgIntrinsicSize(svgText));
+        // 先按可用宽度收敛，再按收敛后的宽度渲染 PNG，避免生成超大位图
+        svgDisplaySize = this.clampImageSize(svgDisplaySize, maxImageWidth);
+        // 只有在 rsvg-convert 可用时才转换（移动端没有 Node 环境，保持原样嵌入）
+        if (this.resolveRsvgConverterPath()) {
+          const shortPath = pathForNotice.length > 50 ? `${pathForNotice.substring(0, 50)}...` : pathForNotice;
+          new Notice(this.i18n.t("SVG_CONVERTING", shortPath));
+          const pngBuffer = await this.convertSvgToPng(svgText, svgDisplaySize.width);
+          if (pngBuffer) {
+            buffer = pngBuffer;
+            imageExtension = 'png';
+          } else {
+            new Notice(this.i18n.t("SVG_CONVERT_FAILED", shortPath));
+          }
         }
       }
+
+      const maxWidth = maxImageWidth;
+      let finalWidth: number;
+      let finalHeight: number;
+
+      if (svgDisplaySize) {
+        finalWidth = svgDisplaySize.width;
+        finalHeight = svgDisplaySize.height;
+      } else {
+        const dimensionsFromBuffer = this.getImageDimensionsFromBuffer(buffer);
+        let naturalWidth = dimensionsFromBuffer?.width;
+        let naturalHeight = dimensionsFromBuffer?.height;
+
+        if (!naturalWidth || !naturalHeight) {
+          naturalWidth = imgEl.naturalWidth > 0 ? imgEl.naturalWidth : undefined;
+          naturalHeight = imgEl.naturalHeight > 0 ? imgEl.naturalHeight : undefined;
+        }
+
+        const styleWidth = parseFloat(imgEl.style.width) || imgEl.width;
+        const styleHeight = parseFloat(imgEl.style.height) || imgEl.height;
+
+        finalWidth = styleWidth || naturalWidth || 0;
+        finalHeight = styleHeight || (finalWidth && naturalWidth && naturalHeight ? (finalWidth / naturalWidth) * naturalHeight : 0);
+
+        if (!finalWidth || !finalHeight || finalWidth <= 0 || finalHeight <= 0) {
+          finalWidth = maxWidth;
+          finalHeight = 300;
+        } else {
+          finalWidth = Math.round(finalWidth);
+          finalHeight = Math.round(finalHeight);
+        }
+      }
+
+      finalWidth = Math.round(finalWidth);
+      finalHeight = Math.round(finalHeight);
+      if (finalWidth <= 0) finalWidth = maxWidth;
+      if (finalHeight <= 0) finalHeight = 300;
+      if (finalWidth > maxWidth) {
+        finalHeight = Math.round((maxWidth / finalWidth) * finalHeight);
+        finalWidth = maxWidth;
+      }
+
+      // 便于排查：控制台里能看到每张图片最终用的宽度上限与尺寸
+      console.log(`[DOCX Exporter] image: ${pathForNotice} | maxWidth=${maxImageWidth} | size=${finalWidth}x${finalHeight}`);
 
       return new ImageRun({
         data: buffer,
@@ -926,6 +1674,19 @@ export default class DocxExporterPlugin extends Plugin {
       const tagName = el.tagName?.toUpperCase();
       if (!tagName) continue;
 
+      // 分页标记：插入 Word 分页符
+      if (this.isPageBreakElement(el)) {
+        docxObjects.push(new Paragraph({ children: [new PageBreak()] }));
+        continue;
+      }
+
+      // 目录占位块（```table-of-contents / ```toc）：直接用标题生成可跳转目录，
+      // 不依赖 Automatic Table Of Contents 插件渲染出来的 DOM
+      if (this.isTocPlaceholder(el)) {
+        docxObjects.push(...this.buildTableOfContents(this.takeTocOptions(el.textContent ?? '')));
+        continue;
+      }
+
       let currentParagraphOptions: any = { ...paragraphStyles, font: mainFont };
 
       if (tagName.startsWith('H') && i > 0) {
@@ -945,10 +1706,27 @@ export default class DocxExporterPlugin extends Plugin {
           currentParagraphOptions.heading = HeadingLevel[tagName as keyof typeof HeadingLevel];
           currentParagraphOptions.spacing = { after: 150 };
           const headingChildren = await this.parseInlineElements(el, sourcePath);
-          if (headingChildren.length > 0) { docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: headingChildren })); }
+          if (headingChildren.length > 0) {
+            // 给标题加书签，目录里的内部链接才能跳转过来
+            const bookmark = this.takeHeadingBookmarkForRender(el.textContent ?? '');
+            const headingRuns: InlineRun[] = bookmark
+              ? [new Bookmark({ id: bookmark, children: headingChildren })]
+              : headingChildren;
+            docxObjects.push(new Paragraph({ ...currentParagraphOptions, children: headingRuns }));
+          }
           break;
         case 'P':
         case 'DIV':
+          // 容器里直接包含列表时按块级结构递归解析，避免列表被压成一整段纯文本
+          if (el.querySelector(':scope > ul, :scope > ol')) {
+            docxObjects.push(...await this.htmlToDocxObjects(el, bodyBgColor, false, indentLevel, sourcePath));
+            break;
+          }
+          // 分页标记可能被包在其它容器里，递归下去才能识别
+          if (el.querySelector('.page-break')) {
+            docxObjects.push(...await this.htmlToDocxObjects(el, bodyBgColor, false, indentLevel, sourcePath));
+            break;
+          }
           if (el.textContent?.trim() || el.querySelector('img')) {
             currentParagraphOptions.spacing = { after: 200 };
             const pChildren = await this.parseInlineElements(el, sourcePath);
@@ -957,12 +1735,12 @@ export default class DocxExporterPlugin extends Plugin {
           break;
         case 'UL':
         case 'OL':
-          docxObjects.push(...await this.parseListElement(
-            el as HTMLUListElement | HTMLOListElement,
-            0,
-            bodyBgColor,
-            sourcePath
-          ));
+          const listElement = el as HTMLUListElement | HTMLOListElement;
+          if (this.isTocList(listElement)) {
+            docxObjects.push(...await this.parseTocListElement(listElement, 0, sourcePath));
+          } else {
+            docxObjects.push(...await this.parseListElement(listElement, 0, bodyBgColor, sourcePath));
+          }
           break;
         case 'HR':
           docxObjects.push(new Paragraph({ thematicBreak: true }));
@@ -981,6 +1759,11 @@ export default class DocxExporterPlugin extends Plugin {
           break;
         case 'PRE':
           const codeElement = el.querySelector('code');
+          if (codeElement && this.isTocCodeBlock(codeElement)) {
+            // 目录插件未启用时，代码块不会被展开，这里自行生成可跳转的目录
+            docxObjects.push(...this.buildTableOfContents(this.takeTocOptions(el.textContent ?? '')));
+            break;
+          }
           if (codeElement) {
             currentParagraphOptions.style = "SourceCode";
             currentParagraphOptions.spacing = {};
@@ -1003,8 +1786,7 @@ export default class DocxExporterPlugin extends Plugin {
           break;
         case 'A':
           const linkTextRuns = await this.parseInlineElements(el, sourcePath);
-          const hyperlink = new ExternalHyperlink({ link: el.getAttribute('href') || '', children: linkTextRuns });
-          docxObjects.push(new Paragraph({ children: [hyperlink], font: mainFont }));
+          docxObjects.push(new Paragraph({ children: linkTextRuns, font: mainFont }));
           break;
         default:
           const defaultChildren = await this.parseInlineElements(el, sourcePath);
@@ -1057,8 +1839,7 @@ export default class DocxExporterPlugin extends Plugin {
           children.push(new Paragraph({ font: mainFont }));
         } else if (tagName === 'A') {
           const linkTextRuns = await this.parseInlineElements(el, sourcePath);
-          const hyperlink = new ExternalHyperlink({ link: el.getAttribute('href') || '', children: linkTextRuns });
-          children.push(new Paragraph({ children: [hyperlink], font: mainFont }));
+          children.push(new Paragraph({ children: linkTextRuns, font: mainFont }));
         } else {
           const inlineChildren = await this.parseInlineElements(el, sourcePath);
           if (inlineChildren.length > 0) {
@@ -1230,8 +2011,71 @@ export default class DocxExporterPlugin extends Plugin {
     }
   }
 
+  // docx 库给每个 Bookmark 都生成同样的数字 id，Word 会因为 id 重复而报“内容有问题”，
+  // 这里按顺序重新编号，保证 w:id 唯一
+  private async fixBookmarkIdsInZip(zip: JSZip): Promise<void> {
+    const docPath = 'word/document.xml';
+    const docFile = zip.file(docPath);
+    if (!docFile) return;
+
+    let xml = await docFile.async('string');
+    if (!xml.includes('w:bookmarkStart')) return;
+
+    let startCounter = 0;
+    xml = xml.replace(/<w:bookmarkStart\b([^>]*?)\/?>/g, (_match, attrs: string) => {
+      startCounter++;
+      return `<w:bookmarkStart${attrs.replace(/w:id="[^"]*"/, `w:id="${startCounter}"`)}/>`;
+    });
+    let endCounter = 0;
+    xml = xml.replace(/<w:bookmarkEnd\b([^>]*?)\/?>/g, (_match, attrs: string) => {
+      endCounter++;
+      return `<w:bookmarkEnd${attrs.replace(/w:id="[^"]*"/, `w:id="${endCounter}"`)}/>`;
+    });
+    zip.file(docPath, xml);
+  }
+
+  // 固定布局下 Word 以 w:tblGrid 的列宽为准，而 docx 生成的是写死的 100 缇，
+  // 这里用单元格实际宽度重写列宽，表格才不会超出页面、图片才不会撑破单元格
+  private async fixTableGridInZip(zip: JSZip): Promise<void> {
+    const docPath = 'word/document.xml';
+    const docFile = zip.file(docPath);
+    if (!docFile) return;
+
+    let xml = await docFile.async('string');
+    if (!xml.includes('<w:tblGrid>')) return;
+
+    xml = xml.replace(/<w:tbl>[\s\S]*?<\/w:tbl>/g, (tableXml: string) => {
+      const firstRow = tableXml.match(/<w:tr>[\s\S]*?<\/w:tr>/);
+      const widths = firstRow
+        ? [...firstRow[0].matchAll(/<w:tcW[^>]*w:w="(\d+)"[^>]*\/>/g)]
+          .map(match => Number(match[1]))
+          .filter(value => value > 0)
+        : [];
+
+      if (widths.length === 0) {
+        // 取不到列宽就退回自动布局，避免列被压成 100 缇
+        return tableXml.replace(/<w:tblLayout[^>]*\/>/g, '');
+      }
+
+      const grid = `<w:tblGrid>${widths.map(width => `<w:gridCol w:w="${width}"/>`).join('')}</w:tblGrid>`;
+      let patched = tableXml.replace(/<w:tblGrid>[\s\S]*?<\/w:tblGrid>/, grid);
+      if (!patched.includes('<w:tblLayout')) {
+        patched = patched.replace(/<\/w:tblPr>/, '<w:tblLayout w:type="fixed"/></w:tblPr>');
+      }
+      return patched;
+    });
+
+    zip.file(docPath, xml);
+  }
+
   private async fixDocxBlobAuto(blob: Blob): Promise<Blob> {
     const zip = await JSZip.loadAsync(blob);
+
+    // 修正书签 id（目录跳转依赖它）
+    await this.fixBookmarkIdsInZip(zip);
+
+    // 修正表格列宽（固定布局依赖 tblGrid）
+    await this.fixTableGridInZip(zip);
 
     const mediaEntries = Object.keys(zip.files).filter(name => name.startsWith('word/media/') && !name.endsWith('/'));
     if (mediaEntries.length === 0) {
@@ -1324,6 +2168,11 @@ export default class DocxExporterPlugin extends Plugin {
       await MarkdownRenderer.render(this.app, markdownContent, tempDiv, sourcePath, component);
       component.unload();
 
+      // 先扫描全部标题并建立书签映射，保证目录链接（通常出现在标题之前）能正确指向
+      this.collectHeadingBookmarks(tempDiv);
+      // 从原始 Markdown 里取出目录代码块的选项
+      this.tocOptionQueue = this.parseTocBlocksFromMarkdown(markdownContent);
+
       // 重置图片计数器并显示开始导出提示
       this.totalNetworkImages = this.countNetworkImages(tempDiv);
       this.currentImageIndex = 0;
@@ -1333,10 +2182,7 @@ export default class DocxExporterPlugin extends Plugin {
 
       const docxObjects = await this.htmlToDocxObjects(tempDiv, bodyBgColor, true, 0, sourcePath);
 
-      // 修复：定义 titleParagraph
-      const title = activeFile.basename;
-      const titleParagraph = new Paragraph({ text: title, heading: HeadingLevel.TITLE, alignment: AlignmentType.CENTER, spacing: { after: 400 }, font: { name: 'Times New Roman' } });
-
+      // 标题完全沿用 Markdown 的层级：# -> 一级标题，## -> 二级标题……不再插入文件名标题
       // 生成所有需要的 numbering 配置
       const numberingConfig = Array.from(this.numberingReferences).map(ref => ({
         reference: ref,
@@ -1364,7 +2210,7 @@ export default class DocxExporterPlugin extends Plugin {
         },
         sections: [{
           properties: {},
-          children: [titleParagraph, ...docxObjects]
+          children: docxObjects
         }]
       });
 

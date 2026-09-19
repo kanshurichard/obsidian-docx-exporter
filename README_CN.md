@@ -14,7 +14,9 @@ DOCX Exporter 是一个为 Obsidian 设计的插件，旨在帮助用户将笔�
 * **跨平台支持**：可在 Windows、macOS、Linux、iOS 和 Android 上使用，无需安装其他软件。
 * **富文本导出**：支持导出包括标题、粗体、斜体、列表、超链接和代码块在内的多种 Markdown 格式。
 * **图片支持**：可导出笔记中的本地图片和网络图片，并自动处理图片格式和尺寸。
+* **SVG 图片支持**：桌面端会自动调用插件内置的 `rsvg-convert` 将 SVG（含外链、图床和相对路径引用的矢量图）栅格化为 PNG 后再嵌入，按 2 倍显示尺寸渲染以保证清晰度；移动端没有该工具时，仍按原始 SVG 嵌入。
 * **兼容性**：生成的 DOCX 文件与 Microsoft Word 具有良好的兼容性。
+* **目录支持**：```table-of-contents 代码块（如 Automatic Table Of Contents 插件）会导出为可点击跳转的目录条目。插件会为每个标题自动加书签，因此目录和正文里的 `#标题` 内链在 Word 中都能正确跳转。
 
 ## 已知问题与解决方法
 目前，我们发现导出的 DOCX 文件在使用 **Apple Pages** 或 **系统自带的预览应用** 打开时，可能会出现排版混乱的情况。
@@ -43,3 +45,6 @@ DOCX Exporter 是一个为 Obsidian 设计的插件，旨在帮助用户将笔�
 * **[docx](https://github.com/dolanmiu/docx)**
     * **许可证:** MIT
     * **说明:** 一个强大的库，用于在纯 JavaScript/TypeScript 中生成 DOCX 文件。
+* **[librsvg (rsvg-convert)](https://gitlab.gnome.org/GNOME/librsvg)**
+    * **许可证:** LGPL-2.1-or-later
+    * **说明:** 随插件附带的 Windows 可执行文件，用于在导出前把 SVG 图片栅格化为 PNG（仅桌面端可用）。
