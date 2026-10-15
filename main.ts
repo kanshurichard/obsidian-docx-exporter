@@ -34,10 +34,10 @@ import {
   ImageRun,
   IParagraphOptions,
   ITableCellOptions,
-  PageNumber,
   TabStopType,
   LeaderType,
-  Tab
+  Tab,
+  PageReference
 } from 'docx';
 import * as JSZip from 'jszip';
 
@@ -520,8 +520,8 @@ const DEFAULT_SETTINGS: DocxExporterSettings = {
   tocIncludePageNumber: false
 };
 
-// 默认页面（Letter）正文右边界 twips = 页面宽 12240 - 右边距 1440
-const TOC_RIGHT_TAB_POSITION = 10800;
+// 目录页码制表位：docx 库默认 A4 页面（宽 11906 twips、边距 1440），正文右边界 = 11906 - 1440*2
+const TOC_RIGHT_TAB_POSITION = 9026;
 
 class DocxExporterSettingTab extends PluginSettingTab {
   plugin: DocxExporterPlugin;
@@ -1039,13 +1039,14 @@ export default class DocxExporterPlugin extends Plugin {
     const includePageNumber = !!this.settings?.tocIncludePageNumber;
     for (const entry of entries) {
       const indentLevel = Math.max(0, entry.level - baseLevel);
-      const children: InlineRun[] = [new InternalHyperlink({
+      const children: (InlineRun | PageReference)[] = [new InternalHyperlink({
         anchor: entry.bookmark,
         children: [this.tocLinkTextRun(entry.text)]
       })];
       if (includePageNumber) {
-        // 制表符 + 右对齐页码（带点状前导符），页码由 Word 的 PAGE 域在打开时填入
-        children.push(new TextRun({ children: [new Tab(), PageNumber.CURRENT], font: mainFont }));
+        // 制表符 + PAGEREF 域：指向标题书签，取标题所在页的真实页码（dirty 域，Word 打开时自动刷新）
+        children.push(new TextRun({ children: [new Tab()], font: mainFont }));
+        children.push(new PageReference(entry.bookmark, { hyperlink: true }));
       }
       paragraphs.push(new Paragraph({
         children,
