@@ -1611,16 +1611,23 @@ export default class DocxExporterPlugin extends Plugin {
   }
 
   // 解析行内元素（支持超链接、加粗、斜体、代码、图片等）
-  private async parseInlineElements(element: HTMLElement, sourcePath: string): Promise<InlineRun[]> {
+  private async parseInlineElements(element: HTMLElement, sourcePath: string, runStyle?: { bold?: boolean; italics?: boolean; size?: number }): Promise<InlineRun[]> {
     const runs: InlineRun[] = [];
     const mainFont = { name: 'Times New Roman' };
     const codeFont = { name: 'Courier New' };
+    // 标题样式覆盖（加粗/斜体/字号）：在 TextRun 构造时合并，才能盖过内置标题样式的默认值
+    const styleRun = (opts: any) => new TextRun({
+      ...opts,
+      bold: runStyle?.bold ?? opts.bold,
+      italics: runStyle?.italics ?? opts.italics,
+      size: runStyle?.size !== undefined ? runStyle.size : opts.size,
+    });
     for (const child of Array.from(element.childNodes)) {
       if (child.nodeType === Node.TEXT_NODE) {
         const textContent = child.textContent ?? '';
         if (!textContent.trim()) continue;
         const style = window.getComputedStyle(element);
-        runs.push(new TextRun({
+        runs.push(styleRun({
           text: textContent,
           color: this.rgbToHex(style.color),
           size: this.pxToHalfPoints(style.fontSize),
@@ -1647,24 +1654,24 @@ export default class DocxExporterPlugin extends Plugin {
         switch (el.tagName.toUpperCase()) {
           case 'A':
             const linkText = el.textContent?.trim() || '';
-            const linkChildren: InlineRun[] = [new TextRun({ text: linkText, style: "Hyperlink", color: this.rgbToHex(style.color) || '0563C1', underline: {} })];
+            const linkChildren: InlineRun[] = [styleRun({ text: linkText, style: "Hyperlink", color: this.rgbToHex(style.color) || '0563C1', underline: {} })];
             const anchor = this.resolveHeadingAnchor(el.getAttribute('data-href') || el.getAttribute('href') || '');
             if (anchor) {
               // 指向本文档标题（目录条目）：用书签实现可点击跳转
               runs.push(new InternalHyperlink({ anchor, children: linkChildren }));
             } else if ((el.getAttribute('href') || '').startsWith('#')) {
               // 站内锚点但没匹配到标题，退化为普通文本，避免生成无效链接
-              runs.push(new TextRun({ text: linkText, color: this.rgbToHex(style.color) || '0563C1', underline: {} }));
+              runs.push(styleRun({ text: linkText, color: this.rgbToHex(style.color) || '0563C1', underline: {} }));
             } else {
               runs.push(new ExternalHyperlink({ link: el.getAttribute('href') || '', children: linkChildren }));
             }
             break;
-          case 'DEL': runOptions.strike = true; runs.push(new TextRun(runOptions)); break;
+          case 'DEL': runOptions.strike = true; runs.push(styleRun(runOptions)); break;
           case 'STRONG':
-          case 'B': runOptions.bold = true; runs.push(new TextRun(runOptions)); break;
+          case 'B': runOptions.bold = true; runs.push(styleRun(runOptions)); break;
           case 'EM':
-          case 'I': runOptions.italics = true; runs.push(new TextRun(runOptions)); break;
-          case 'U': runOptions.underline = {}; runs.push(new TextRun(runOptions)); break;
+          case 'I': runOptions.italics = true; runs.push(styleRun(runOptions)); break;
+          case 'U': runOptions.underline = {}; runs.push(styleRun(runOptions)); break;
           case 'IMG':
             const imageRun = await this.createImageRun(el as HTMLImageElement, sourcePath);
             if (imageRun) runs.push(imageRun);
@@ -1681,7 +1688,7 @@ export default class DocxExporterPlugin extends Plugin {
               }
             } else if (runOptions.text && runOptions.text.trim().length > 0) {
               runOptions.text = runOptions.text.trim();
-              runs.push(new TextRun(runOptions));
+              runs.push(styleRun(runOptions));
             }
             break;
         }
@@ -1931,24 +1938,27 @@ export default class DocxExporterPlugin extends Plugin {
     return count;
   }
 
-  // 将 H1~H6 的配置（加粗/斜体/字号/对齐）合并到段落选项；未配置的字段保持默认
+  // 标题段落级对齐（对齐不是 run 属性，段落级设置可盖过内置标题样式）
   private applyHeadingConfig(opts: any, level: number): void {
     const cfg = this.settings?.headingStyles?.[('h' + level) as HeadingKey];
-    if (!cfg) return;
-    if (cfg.bold || cfg.italic || cfg.size) {
-      opts.run = opts.run || {};
-      if (cfg.bold) opts.run.bold = true;
-      if (cfg.italic) opts.run.italics = true;
-      if (cfg.size) {
-        const pt = parseFloat(cfg.size);
-        if (!isNaN(pt) && pt > 0) opts.run.size = Math.round(pt * 2); // docx 字号单位为半磅
-      }
-    }
-    if (cfg.alignment) {
+    if (cfg?.alignment) {
       opts.alignment = cfg.alignment === 'left' ? AlignmentType.LEFT
         : cfg.alignment === 'center' ? AlignmentType.CENTER
           : AlignmentType.RIGHT;
     }
+  }
+
+  // 取标题的 run 级覆盖（加粗/斜体/字号），用于构造 TextRun 时盖过内置标题样式
+  private headingRunStyle(level: number): { bold?: boolean; italics?: boolean; size?: number } | undefined {
+    const cfg = this.settings?.headingStyles?.[('h' + level) as HeadingKey];
+    if (!cfg) return undefined;
+    let size: number | undefined;
+    if (cfg.size) {
+      const pt = parseFloat(cfg.size);
+      if (!isNaN(pt) && pt > 0) size = Math.round(pt * 2); // docx 字号单位为半磅
+    }
+    if (!cfg.bold && !cfg.italic && size === undefined) return undefined;
+    return { bold: cfg.bold, italics: cfg.italic, size };
   }
 
   private async htmlToDocxObjects(
@@ -2033,7 +2043,7 @@ export default class DocxExporterPlugin extends Plugin {
           currentParagraphOptions.heading = HeadingLevel[tagName as keyof typeof HeadingLevel];
           currentParagraphOptions.spacing = { after: 150 };
           this.applyHeadingConfig(currentParagraphOptions, Number(tagName.substring(1)));
-          const headingChildren = await this.parseInlineElements(el, sourcePath);
+          const headingChildren = await this.parseInlineElements(el, sourcePath, this.headingRunStyle(Number(tagName.substring(1))));
           if (headingChildren.length > 0) {
             // 给标题加书签，目录里的内部链接才能跳转过来
             const bookmark = this.takeHeadingBookmarkForRender(el.textContent ?? '');
