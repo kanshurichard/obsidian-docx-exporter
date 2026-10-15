@@ -23,3 +23,41 @@
 .docx-export-temp-div blockquote {
     background-color: #F0F0F0;
 }
+
+/* 设置页：标题样式配置控件 */
+.docx-heading-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-top: 1px solid var(--background-modifier-border);
+}
+.docx-heading-row:last-of-type {
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+.docx-heading-label {
+    min-width: 32px;
+    font-weight: 600;
+}
+.docx-style-toggle {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    text-align: center;
+}
+.docx-style-italic {
+    font-style: italic;
+    font-family: serif;
+}
+.docx-style-toggle.is-active {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent);
+}
+.docx-style-size {
+    width: 64px;
+}

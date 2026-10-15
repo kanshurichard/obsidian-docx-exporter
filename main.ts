@@ -7,7 +7,10 @@ import {
   TFile,
   requestUrl,
   getLanguage,
-  Component
+  Component,
+  PluginSettingTab,
+  Setting,
+  setIcon
 } from 'obsidian';
 import {
   Document,
@@ -30,7 +33,11 @@ import {
   BorderStyle,
   ImageRun,
   IParagraphOptions,
-  ITableCellOptions
+  ITableCellOptions,
+  PageNumber,
+  TabStopType,
+  LeaderType,
+  Tab
 } from 'docx';
 import * as JSZip from 'jszip';
 
@@ -69,7 +76,12 @@ const locales = {
     "SVG_CONVERTING": "Converting SVG image: {0}",
     "SVG_CONVERT_FAILED": "SVG conversion failed for: {0}, embedding the original file.",
     "MERMAID_RENDERING": "Rendering Mermaid diagram...",
-    "MERMAID_RENDER_FAILED": "Mermaid diagram rendering failed, exporting it as a code block."
+    "MERMAID_RENDER_FAILED": "Mermaid diagram rendering failed, exporting it as a code block.",
+    "SETTINGS_HEADING_STYLES_TITLE": "Heading styles",
+    "SETTINGS_SIZE_PLACEHOLDER": "Size",
+    "SETTINGS_TOC_TITLE": "Table of contents",
+    "SETTINGS_TOC_PAGE_NUMBER": "Include page number",
+    "SETTINGS_TOC_PAGE_NUMBER_DESC": "Add a right-aligned page number with dot leaders on each TOC entry."
   },
   zh: {
     "PLUGIN_NAME": "DOCX 导出器",
@@ -102,7 +114,12 @@ const locales = {
     "SVG_CONVERTING": "正在转换 SVG 图片：{0}",
     "SVG_CONVERT_FAILED": "SVG 转换失败：{0}，将嵌入原始文件。",
     "MERMAID_RENDERING": "正在渲染 Mermaid 图表...",
-    "MERMAID_RENDER_FAILED": "Mermaid 图表渲染失败，将按代码块导出。"
+    "MERMAID_RENDER_FAILED": "Mermaid 图表渲染失败，将按代码块导出。",
+    "SETTINGS_HEADING_STYLES_TITLE": "标题样式",
+    "SETTINGS_SIZE_PLACEHOLDER": "字号",
+    "SETTINGS_TOC_TITLE": "目录",
+    "SETTINGS_TOC_PAGE_NUMBER": "包含页码",
+    "SETTINGS_TOC_PAGE_NUMBER_DESC": "在每个目录条目右侧添加带前导点的右对齐页码。"
   },
   'zh-tw': {
     "PLUGIN_NAME": "DOCX 匯出器",
@@ -481,6 +498,116 @@ class I18N {
   }
 }
 
+// --- 插件配置 ---
+type HeadingKey = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+type HeadingAlignment = 'left' | 'center' | 'right';
+
+interface HeadingStyleConfig {
+  // 仅当显式开启时才覆盖默认样式；未设置（undefined）则沿用默认
+  bold?: boolean;
+  italic?: boolean;
+  size?: string;       // 字号（pt），空字符串表示继承默认
+  alignment?: HeadingAlignment;
+}
+
+interface DocxExporterSettings {
+  headingStyles: Record<HeadingKey, HeadingStyleConfig>;
+  tocIncludePageNumber: boolean;
+}
+
+const DEFAULT_SETTINGS: DocxExporterSettings = {
+  headingStyles: { h1: {}, h2: {}, h3: {}, h4: {}, h5: {}, h6: {} },
+  tocIncludePageNumber: false
+};
+
+// 默认页面（Letter）正文右边界 twips = 页面宽 12240 - 右边距 1440
+const TOC_RIGHT_TAB_POSITION = 10800;
+
+class DocxExporterSettingTab extends PluginSettingTab {
+  plugin: DocxExporterPlugin;
+  private i18n: I18N;
+
+  constructor(app: App, plugin: DocxExporterPlugin) {
+    super(app, plugin);
+    this.plugin = plugin;
+    this.i18n = plugin.i18n;
+  }
+
+  display(): void {
+    const { containerEl } = this;
+    containerEl.empty();
+
+    containerEl.createEl('h2', { text: this.i18n.t('SETTINGS_HEADING_STYLES_TITLE') });
+
+    const headings: { key: HeadingKey, label: string }[] = [
+      { key: 'h1', label: 'H1' }, { key: 'h2', label: 'H2' }, { key: 'h3', label: 'H3' },
+      { key: 'h4', label: 'H4' }, { key: 'h5', label: 'H5' }, { key: 'h6', label: 'H6' },
+    ];
+
+    for (const { key, label } of headings) {
+      const cfg = this.plugin.settings.headingStyles[key];
+      // 用原生 DOM 构建整行控件，避免 Setting 链式控件在某些环境下渲染中断
+      const row = containerEl.createDiv({ cls: 'docx-heading-row' });
+      row.createEl('span', { text: label, cls: 'docx-heading-label' });
+
+      // B / I 切换按钮
+      const boldBtn = row.createEl('button', { text: 'B', cls: 'docx-style-toggle' });
+      boldBtn.classList.toggle('is-active', !!cfg.bold);
+      boldBtn.addEventListener('click', async () => {
+        cfg.bold = cfg.bold ? undefined : true;
+        boldBtn.classList.toggle('is-active', !!cfg.bold);
+        await this.plugin.saveSettings();
+      });
+      const italicBtn = row.createEl('button', { text: 'I', cls: 'docx-style-toggle docx-style-italic' });
+      italicBtn.classList.toggle('is-active', !!cfg.italic);
+      italicBtn.addEventListener('click', async () => {
+        cfg.italic = cfg.italic ? undefined : true;
+        italicBtn.classList.toggle('is-active', !!cfg.italic);
+        await this.plugin.saveSettings();
+      });
+
+      // 字号输入框（pt，留空继承默认）
+      const sizeInput = row.createEl('input', { cls: 'docx-style-size' });
+      sizeInput.type = 'text';
+      sizeInput.placeholder = this.i18n.t('SETTINGS_SIZE_PLACEHOLDER');
+      sizeInput.value = cfg.size ?? '';
+      sizeInput.addEventListener('change', async () => {
+        const v = sizeInput.value.trim();
+        cfg.size = v || undefined;
+        await this.plugin.saveSettings();
+      });
+
+      // 三个对齐图标按钮（左/中/右，再次点击取消即继承默认）
+      for (const value of ['left', 'center', 'right'] as HeadingAlignment[]) {
+        const btn = row.createEl('button', { cls: 'docx-style-toggle docx-align-toggle' });
+        setIcon(btn, value === 'left' ? 'align-left' : value === 'center' ? 'align-center' : 'align-right');
+        btn.setAttribute('data-align', value);
+        btn.classList.toggle('is-active', cfg.alignment === value);
+        btn.addEventListener('click', async () => {
+          cfg.alignment = cfg.alignment === value ? undefined : value;
+          row.querySelectorAll('.docx-align-toggle').forEach(el => {
+            el.classList.toggle('is-active', el.getAttribute('data-align') === cfg.alignment);
+          });
+          await this.plugin.saveSettings();
+        });
+      }
+    }
+
+    containerEl.createEl('h2', { text: this.i18n.t('SETTINGS_TOC_TITLE') });
+    new Setting(containerEl)
+      .setName(this.i18n.t('SETTINGS_TOC_PAGE_NUMBER'))
+      .setDesc(this.i18n.t('SETTINGS_TOC_PAGE_NUMBER_DESC'))
+      .addToggle(toggle => {
+        toggle.setValue(this.plugin.settings.tocIncludePageNumber)
+          .onChange(async (value) => {
+            this.plugin.settings.tocIncludePageNumber = value;
+            await this.plugin.saveSettings();
+          });
+      });
+  }
+
+}
+
 // --- 文件覆盖确认弹窗 ---
 class OverwriteConfirmModal extends Modal {
   onConfirm: () => void;
@@ -504,6 +631,7 @@ class OverwriteConfirmModal extends Modal {
 // --- 插件主类 ---
 export default class DocxExporterPlugin extends Plugin {
   i18n: I18N;
+  settings: DocxExporterSettings;
   private numberingCounter = 1; // 有序列表编号计数器
   private numberingReferences = new Set<string>(); // 记录所有编号 reference
 
@@ -530,7 +658,9 @@ export default class DocxExporterPlugin extends Plugin {
 
   async onload() {
     this.i18n = new I18N(this.app);
+    await this.loadSettings();
     this.addRibbonIcon('file-output', this.i18n.t("EXPORT_COMMAND_NAME"), () => this.exportCurrentNoteToDocx());
+    this.addSettingTab(new DocxExporterSettingTab(this.app, this));
     this.addCommand({
       id: 'export-to-docx',
       name: this.i18n.t("EXPORT_COMMAND_NAME"),
@@ -547,6 +677,19 @@ export default class DocxExporterPlugin extends Plugin {
     });
   }
   onunload() {
+  }
+
+  async loadSettings() {
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    // 确保每个标题层级都有配置对象，避免旧数据缺字段
+    for (const key of ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as HeadingKey[]) {
+      if (!this.settings.headingStyles) this.settings.headingStyles = {} as any;
+      if (!this.settings.headingStyles[key]) this.settings.headingStyles[key] = {};
+    }
+  }
+
+  async saveSettings() {
+    await this.saveData(this.settings);
   }
 
   // px转为docx字体单位
@@ -893,16 +1036,25 @@ export default class DocxExporterPlugin extends Plugin {
       return paragraphs;
     }
 
+    const includePageNumber = !!this.settings?.tocIncludePageNumber;
     for (const entry of entries) {
       const indentLevel = Math.max(0, entry.level - baseLevel);
+      const children: InlineRun[] = [new InternalHyperlink({
+        anchor: entry.bookmark,
+        children: [this.tocLinkTextRun(entry.text)]
+      })];
+      if (includePageNumber) {
+        // 制表符 + 右对齐页码（带点状前导符），页码由 Word 的 PAGE 域在打开时填入
+        children.push(new TextRun({ children: [new Tab(), PageNumber.CURRENT], font: mainFont }));
+      }
       paragraphs.push(new Paragraph({
-        children: [new InternalHyperlink({
-          anchor: entry.bookmark,
-          children: [this.tocLinkTextRun(entry.text)]
-        })],
+        children,
         indent: { left: 360 * indentLevel },
         spacing: { after: 60 },
-        font: mainFont
+        font: mainFont,
+        tabStops: includePageNumber
+          ? [{ type: TabStopType.RIGHT, position: TOC_RIGHT_TAB_POSITION, leader: LeaderType.DOT }]
+          : undefined
       }));
     }
     return paragraphs;
@@ -1778,6 +1930,26 @@ export default class DocxExporterPlugin extends Plugin {
     return count;
   }
 
+  // 将 H1~H6 的配置（加粗/斜体/字号/对齐）合并到段落选项；未配置的字段保持默认
+  private applyHeadingConfig(opts: any, level: number): void {
+    const cfg = this.settings?.headingStyles?.[('h' + level) as HeadingKey];
+    if (!cfg) return;
+    if (cfg.bold || cfg.italic || cfg.size) {
+      opts.run = opts.run || {};
+      if (cfg.bold) opts.run.bold = true;
+      if (cfg.italic) opts.run.italics = true;
+      if (cfg.size) {
+        const pt = parseFloat(cfg.size);
+        if (!isNaN(pt) && pt > 0) opts.run.size = Math.round(pt * 2); // docx 字号单位为半磅
+      }
+    }
+    if (cfg.alignment) {
+      opts.alignment = cfg.alignment === 'left' ? AlignmentType.LEFT
+        : cfg.alignment === 'center' ? AlignmentType.CENTER
+          : AlignmentType.RIGHT;
+    }
+  }
+
   private async htmlToDocxObjects(
     element: HTMLElement,
     bodyBgColor: string,
@@ -1859,6 +2031,7 @@ export default class DocxExporterPlugin extends Plugin {
         case 'H6':
           currentParagraphOptions.heading = HeadingLevel[tagName as keyof typeof HeadingLevel];
           currentParagraphOptions.spacing = { after: 150 };
+          this.applyHeadingConfig(currentParagraphOptions, Number(tagName.substring(1)));
           const headingChildren = await this.parseInlineElements(el, sourcePath);
           if (headingChildren.length > 0) {
             // 给标题加书签，目录里的内部链接才能跳转过来
