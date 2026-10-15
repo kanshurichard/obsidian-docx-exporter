@@ -80,8 +80,8 @@ const locales = {
     "SETTINGS_HEADING_STYLES_TITLE": "Heading styles",
     "SETTINGS_SIZE_PLACEHOLDER": "Size",
     "SETTINGS_TOC_TITLE": "Table of contents",
-    "SETTINGS_TOC_PAGE_NUMBER": "Include page number",
-    "SETTINGS_TOC_PAGE_NUMBER_DESC": "Add a right-aligned page number with dot leaders on each TOC entry."
+    "SETTINGS_TOC_PAGE_NUMBER": "Exclude page number",
+    "SETTINGS_TOC_PAGE_NUMBER_DESC": "On by default. Turn on to hide the right-aligned page number with dot leaders on each TOC entry."
   },
   zh: {
     "PLUGIN_NAME": "DOCX 导出器",
@@ -118,8 +118,8 @@ const locales = {
     "SETTINGS_HEADING_STYLES_TITLE": "标题样式",
     "SETTINGS_SIZE_PLACEHOLDER": "字号",
     "SETTINGS_TOC_TITLE": "目录",
-    "SETTINGS_TOC_PAGE_NUMBER": "包含页码",
-    "SETTINGS_TOC_PAGE_NUMBER_DESC": "在每个目录条目右侧添加带前导点的右对齐页码。"
+    "SETTINGS_TOC_PAGE_NUMBER": "排除页码",
+    "SETTINGS_TOC_PAGE_NUMBER_DESC": "默认开启。勾选后隐藏每个目录条目右侧带前导点的右对齐页码。"
   },
   'zh-tw': {
     "PLUGIN_NAME": "DOCX 匯出器",
@@ -512,12 +512,12 @@ interface HeadingStyleConfig {
 
 interface DocxExporterSettings {
   headingStyles: Record<HeadingKey, HeadingStyleConfig>;
-  tocIncludePageNumber: boolean;
+  tocExcludePageNumber: boolean;
 }
 
 const DEFAULT_SETTINGS: DocxExporterSettings = {
   headingStyles: { h1: {}, h2: {}, h3: {}, h4: {}, h5: {}, h6: {} },
-  tocIncludePageNumber: false
+  tocExcludePageNumber: false
 };
 
 // 目录页码制表位：docx 库默认 A4 页面（宽 11906 twips、边距 1440），正文右边界 = 11906 - 1440*2
@@ -598,9 +598,9 @@ class DocxExporterSettingTab extends PluginSettingTab {
       .setName(this.i18n.t('SETTINGS_TOC_PAGE_NUMBER'))
       .setDesc(this.i18n.t('SETTINGS_TOC_PAGE_NUMBER_DESC'))
       .addToggle(toggle => {
-        toggle.setValue(this.plugin.settings.tocIncludePageNumber)
+        toggle.setValue(this.plugin.settings.tocExcludePageNumber)
           .onChange(async (value) => {
-            this.plugin.settings.tocIncludePageNumber = value;
+            this.plugin.settings.tocExcludePageNumber = value;
             await this.plugin.saveSettings();
           });
       });
@@ -1036,7 +1036,7 @@ export default class DocxExporterPlugin extends Plugin {
       return paragraphs;
     }
 
-    const includePageNumber = !!this.settings?.tocIncludePageNumber;
+    const includePageNumber = !this.settings?.tocExcludePageNumber;
     for (const entry of entries) {
       const indentLevel = Math.max(0, entry.level - baseLevel);
       const children: (InlineRun | PageReference)[] = [new InternalHyperlink({
